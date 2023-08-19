@@ -1,0 +1,1 @@
+# Rework of my solo project using MongoDB as the database to try to solve scalability issues.

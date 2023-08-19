@@ -1,0 +1,37 @@
+.cardimage {
+  object-fit: auto;
+  height: 180px;
+  max-width: 200px;
+  min-width: 100px;
+  padding-top: "75%";
+  width: "100%";
+  background-size: "contain";
+}
+
+/* .absoluteGrid {
+  
+}
+
+.relativeDiv {
+  
+} */
+
+.bestClass {
+  background-color: rgb(0, 128, 0);
+  background-color: rgb(255, 141, 141);
+  opacity: 50%;
+  z-index: 1;
+  position:relative;
+}
+
+.worstClass {
+  background-color: rgb(255, 0, 0);
+  opacity: 50%;
+  z-index: 1;
+    position:relative;
+}
+
+.mainCard {
+  z-index: 2;
+  position:relative;
+}

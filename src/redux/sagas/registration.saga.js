@@ -8,6 +8,8 @@ function* registerUser(action) {
     yield put({ type: 'CLEAR_REGISTRATION_ERROR' });
 
     // passes the username and password from the payload to the server
+    const response1 = yield axios.post('api/atlas/user', action.payload)
+    console.log("response 1", response1)
     yield axios.post('/api/user/register', action.payload);
 
     // automatically log a user in after registration

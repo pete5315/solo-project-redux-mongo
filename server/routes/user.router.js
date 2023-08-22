@@ -1,7 +1,7 @@
 const express = require('express');
 const {
   rejectUnauthenticated,
-} = require('../modules/authentication-middleware');
+} = require('../modules/old modules/authentication-middleware');
 const encryptLib = require('../modules/encryption');
 const pool = require('../modules/pool');
 const userStrategy = require('../strategies/user.strategy');
@@ -18,6 +18,7 @@ router.get('/', rejectUnauthenticated, (req, res) => {
 // The only thing different from this and every other post we've seen
 // is that the password gets encrypted before being inserted
 router.post('/register', (req, res, next) => {
+  console.log("reqbodyun", req.body.username)
   const username = req.body.username;
   const password = encryptLib.encryptPassword(req.body.password);
 

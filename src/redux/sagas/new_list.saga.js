@@ -12,6 +12,8 @@ function* newList(action) {
     // allow the server session to recognize the user
     // If a user is logged in, this will return their information
     // from the server session (req.user)
+    let atlasResponse = yield axios.post('/api/atlas/list/', config);
+    console.log(atlasResponse)
     let response = yield axios.get('/api/newlist/', config);
     response=response.data[0]
     yield put({ type: 'SET_CURRENT_LIST', payload: {id: response, completed: false }});

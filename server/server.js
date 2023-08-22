@@ -13,7 +13,7 @@ const port = 3000;
 
 // Route includes
 const userRouter = require('./routes/user.router');
-const userListRouter = require('./routes/userlist.router');
+// const userListRouter = require('./routes/userlist.router');
 // const newListRouter = require('./routes/newlist.router');
 // const addGameRouter = require('./routes/addgame.router');
 // const randomGameRouter = require('./routes/randomgame.router');
@@ -23,6 +23,10 @@ const userListRouter = require('./routes/userlist.router');
 // const editFinishedListRouter = require('./routes/editfinishedlist.router')
 // const deleteGameRouter = require('./routes/deletegame.router')
 // const deleteListRouter = require('./routes/deletelist.router')
+
+const userAtlasRouter = require('./routes/userAtlas.router.js');
+const gamesListRouter = require('./routes/gamesList.router.js');
+
 
 // Body parser middleware
 app.use(bodyParser.json());
@@ -46,7 +50,7 @@ app.use(passport.session());
 
 /* Routes */
 app.use('/api/user', userRouter);
-app.use('/api/userlist', userListRouter);
+// app.use('/api/userlist', userListRouter);
 // app.use('/api/newlist', newListRouter);
 // app.use('/api/addgame', addGameRouter);
 // app.use('/api/randomgames', randomGameRouter);
@@ -56,6 +60,9 @@ app.use('/api/userlist', userListRouter);
 // app.use('/api/editfinishedlist', editFinishedListRouter);
 // app.use('/api/deletegame', deleteGameRouter);
 // app.use('/api/deletelist', deleteListRouter);
+
+app.use('/api/atlas/user', userAtlasRouter);
+app.use('/api/atlas/list', gamesListRouter);
 
 // Serve static files
 app.use(express.static('build'));

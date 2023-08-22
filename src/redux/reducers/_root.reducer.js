@@ -11,6 +11,7 @@ import bggProcessing from './bgg_processing.reducer';
 import progress from './progress.reducer';
 import currentStep from './current_step.reducer';
 import listComplete from './listcomplete.reducer';
+import userAtlasReducer from './user_atlas.reducer';
 
 // rootReducer is the primary reducer for our entire project
 // It bundles up all of the other reducers so our project can use them.
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
   progress,
   currentStep,
   listComplete,
+  userAtlasReducer,
 });
 
 export default rootReducer;

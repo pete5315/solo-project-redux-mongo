@@ -1,4 +1,4 @@
-const pool = require("./pool");
+const pool = require("../pool");
 
 async function postRequestUpdateRank(input1, input2, input3, input4) {
   console.log("check existence", input1);

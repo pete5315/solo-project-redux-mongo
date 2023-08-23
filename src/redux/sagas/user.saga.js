@@ -13,6 +13,9 @@ function* fetchUser() {
     // allow the server session to recognize the user
     // If a user is logged in, this will return their information
     // from the server session (req.user)
+    let atlasResponse = yield axios.get('/api/atlas/list/', config);
+    console.log(atlasResponse);
+
     const response = yield axios.get('/api/user', config);
     // now that the session has given us a user object
     // with an id and username set the client-side user object to let

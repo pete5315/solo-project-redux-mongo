@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const gamesSchema = new mongoose.Schema({
-  __id: Number,
+  __gameId: Number,
   name: String,
   url: String,
   betterThan: Array,
@@ -9,13 +9,13 @@ const gamesSchema = new mongoose.Schema({
 })
 
 const matchupsSchema = new mongoose.Schema({
-  __id: Number,
+  __matchupsId: Number,
   matchupNumber: Number,
   games: Array,
 })
 
 const resultsSchema = new mongoose.Schema({
-  __id: Number,
+  __resultsId: Number,
   best: Number,
   worst: Number,
   unranked1: Number,
@@ -23,10 +23,15 @@ const resultsSchema = new mongoose.Schema({
 })
 
 const listSchema = new mongoose.Schema({
-  __id: Number,
+  __listId: Number,
   games: [gamesSchema],
   matchups: [matchupsSchema],
   results: [resultsSchema],
+  completed: Boolean,
+  lastModifiedDate: {
+    type: Date,
+    default: Date.now,
+  },
 })
 
 const userSchema = new mongoose.Schema({

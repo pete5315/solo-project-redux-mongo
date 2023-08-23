@@ -20,11 +20,18 @@ function UserPage() {
     });
   }
 
+  function newList2() {
+    dispatch({
+      type: "FETCH_USER_LISTS",
+    });
+  }
+
   return (
     <div className="container text-color">
       <h2>Welcome, {user.username}!</h2>
       {/* <p>Your ID is: {user.id}</p> */}
       <button onClick={newList}>Create a new list!</button>
+      <button onClick={newList2}>Fetch user lists!</button>
       <UserLists />
       {/* <LogOutButton className="btn" /> */}
     </div>

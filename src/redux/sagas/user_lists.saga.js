@@ -13,12 +13,16 @@ function* fetchUserLists() {
     // allow the server session to recognize the user
     // If a user is logged in, this will return their information
     // from the server session (req.user)
-    const response = yield axios.get('/api/userlist/', config);
+    const atlasResponse = yield axios.get('/api/atlas/list/', config);
+    console.log(atlasResponse)
+    console.log(atlasResponse.data)
+
+    // const response = yield axios.get('/api/userlist/', config);
 
     // now that the session has given us a user object
     // with an id and username set the client-side user object to let
     // the client-side code know the user is logged in
-    yield put({ type: 'SET_USER_LIST', payload: response.data });
+    yield put({ type: 'SET_USER_LIST', payload: atlasResponse.data });
   } catch (error) {
     console.log('User get request failed', error);
   }

@@ -1,23 +1,31 @@
 const express = require("express");
 const {
   rejectUnauthenticated,
-} = require("../modules/old modules/authentication-middleware");
-const User = require ("../models/user")
-const newList = require("../modules/newList")
+} = require("../modules/authentication-middleware");
+const User = require("../models/user");
+const lastListId = require("../modules/lastListId");
 // const pool = require("../modules/pool");
 
 // const router = express.Router();
 const app = express();
 const router = express.Router();
-console.log("in users router")
+console.log("in users router");
 
 // Define your routes and endpoints
 
 //get all lists for a particular user
 router.get("/", async (req, res) => {
   // Get all lists
-  const lists = await User.find();
-  res.json(users);
+  await User.find({
+    _id: "64e6493ce50dc851f964407d",
+  }) //will need to include the specific userid when authentication/login is working, hardcoded for now
+    .then((documents) => {
+      const jsonResult = JSON.parse(JSON.stringify(documents, null, 2)); //this converts the cursor to object format
+      res.send(jsonResult[0].lists); //this should return the id of the newest list just added
+    })
+    .catch((error) => {
+      console.error("Error fetching and converting documents:", error);
+    });
 });
 
 router.get("/:id", async (req, res) => {
@@ -27,19 +35,35 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  console.log(req.user);
+  console.log("requser42", req.user);
   // Add a new list
-  res = newList(req.params.id, res);
+  let newId = await lastListId(req.params.id, res);
+  // console.log('newid', newId);
+  console.log(await lastListId(req.params.id, res));
   User.updateOne(
+    //this adds a new list
     // { _id: req.user.id, 'orders.orderId': orderId }, //need req.user.id to show the _id value from mongo
-    { _id: '64e3ebbab324bb30511206c6' },
-    { $push: { 'lists': [{__id: 1, games: [], matchups: [], results: []}] } }
+    { _id: "64e6493ce50dc851f964407d" }, //user id hardcoded currently
+    {
+      $push: {
+        lists: [
+          {
+            __listId: newId + 1,
+            games: [],
+            matchups: [],
+            results: [],
+            lastModifiedDate: new Date(),
+            completed: false,
+          },
+        ],
+      },
+    } //this is the list object format, __id hardcoded currently
   )
-    .then(result => {
-      console.log('Update result:', result);
+    .then((result) => {
+      console.log("Update result:", result);
     })
-    .catch(error => {
-      console.error('Error updating nested array:', error);
+    .catch((error) => {
+      console.error("Error updating nested array:", error);
     });
   // res.json(user);
 });
@@ -55,8 +79,14 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   // // Delete a user by ID
-  // await User.findByIdAndDelete(req.params.id);
-  // res.sendStatus(204);
+  console.log("delete req params", req.params.id);
+  try {
+    await User.findOneAndDelete({ __listId: req.params.id });
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
-module.exports = router
+module.exports = router;

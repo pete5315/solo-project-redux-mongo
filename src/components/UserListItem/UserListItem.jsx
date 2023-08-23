@@ -20,26 +20,28 @@ function UserListItem({ list, i }) {
     dispatch({
       type: "DELETE_LIST",
       payload: {
-        id: list.id,
+        id: list.__listId,
       },
     });
   }
 
+  console.log(list);
+
   return (
-    <tr key={list.id} onClick={setCurrentList}>
+    <tr key={list.__listId} onClick={setCurrentList}>
       <td>
         <Link to="/inputs" className="text-color">
-          <div>{list.completed ? "Complete" : "Incomplete"}</div>
+          <div>{list.completed ? "true" : "false"}</div>
         </Link>
       </td>
-      <td>{list.length && list.length}</td>
-      <td>
+      <td>{list.games.length && list.games.length}</td>
+      {/* <td>
         {list.date.slice(5, 7) +
           "-" +
           list.date.slice(8, 10) +
           "-" +
           list.date.slice(0, 4)}
-      </td>
+      </td> */}
       <td>
         <Button
           variant="text"

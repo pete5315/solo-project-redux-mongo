@@ -1,7 +1,7 @@
 const express = require("express");
 const {
   rejectUnauthenticated,
-} = require("../modules/old modules/authentication-middleware");
+} = require("../modules/authentication-middleware");
 const User = require ("../models/user")
 // const pool = require("../modules/pool");
 

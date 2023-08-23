@@ -26,7 +26,6 @@ const userRouter = require('./routes/user.router');
 
 const userAtlasRouter = require('./routes/userAtlas.router.js');
 const gamesListRouter = require('./routes/gamesList.router.js');
-const deleteListRouter = require('./routes/deleteList.router.js');
 
 
 // Body parser middleware
@@ -64,7 +63,6 @@ app.use('/api/user', userRouter);
 
 app.use('/api/atlas/user', userAtlasRouter);
 app.use('/api/atlas/list', gamesListRouter);
-app.use('/api/atlas/deletelist/', gamesListRouter);
 
 // Serve static files
 app.use(express.static('build'));

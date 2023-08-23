@@ -77,16 +77,29 @@ router.put("/:id", async (req, res) => {
   // res.json(user);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:userId/:listId", async (req, res) => {
   // // Delete a user by ID
   console.log("delete req params", req.params.id);
+  const { userId, listId } = req.params;
+
   try {
-    await User.findOneAndDelete({ __listId: req.params.id });
-    res.sendStatus(200);
+    const user = await User.findById('64e6493ce50dc851f964407d'); //userId hardcoded for now
+
+    if (user) {
+      // Use the $pull operator to remove the list by its listId
+      user.lists = user.lists.filter(list => list.__listId !== parseInt(listId, 10));
+      await user.save();
+
+      console.log(`List with listId ${listId} deleted for user ${userId}`);
+      res.status(200).json({ message: `List with listId ${listId} deleted successfully` });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
   } catch (error) {
-    console.error("Error deleting user:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error('Error deleting list:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
+
 });
 
 module.exports = router;

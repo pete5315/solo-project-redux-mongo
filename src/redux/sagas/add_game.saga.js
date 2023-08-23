@@ -18,7 +18,7 @@ function* newGame(action) {
     // allow the server session to recognize the user
     // If a user is logged in, this will return their information
     // from the server session (req.user)
-    yield axios.post('/api/addgame/', {newGame: action.payload.newGame, id: action.payload.id, url: action.payload.url, thumbnail: action.payload.thumbnail}, config);
+    yield axios.post('/api/atlas/list/addgame/' + action.payload.listId, {newGame: action.payload.newGame, id: action.payload.id, url: action.payload.url, thumbnail: action.payload.thumbnail}, config);
     yield put ({type:'GET_GAMES', payload:{id: action.payload.id}});
     // now that the session has given us a user object
     // with an id and username set the client-side user object to let
@@ -37,7 +37,7 @@ function* getGames(action) {
       headers: { 'Content-Type': 'application/json' },
       withCredentials: true,
     };
-    let games = yield axios.get('/api/addgame/'+action.payload.id, config);
+    let games = yield axios.get('/api/addgame/' + action.payload.id, config);
     console.log(games);
     let sendGames = []
     for (let x of games.data) {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import AddedGames from "../AddedGames/AddedGames";
+import AddedGames from "../2-AddedGames/AddedGames";
 import { Link } from "react-router-dom";
 import "./AddGames.css";
 
@@ -35,16 +35,18 @@ function AddGames() {
     });
   }
 
+  console.log(list);
+
   function submitTheData(event) {
     event.preventDefault();
-    console.log(list.id);
-    if (list.id === null) {
-      list.id = 1;
+    console.log(list.__listId);
+    if (list.__listId === null) {
+      list.__listId = 1;
     }
 
     dispatch({
       type: "ADD_GAME",
-      payload: { newGame: newGameName, id: list.id, url: null },
+      payload: { newGame: newGameName, listId: list.__listId, url: null },
     });
     setNewGameName("");
   }

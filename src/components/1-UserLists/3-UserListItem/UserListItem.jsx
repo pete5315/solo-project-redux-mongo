@@ -20,7 +20,7 @@ function UserListItem({ list, i }) {
     dispatch({
       type: "DELETE_LIST",
       payload: {
-        id: list.__listId,
+        id: list.listId,
       },
     });
   }
@@ -28,7 +28,7 @@ function UserListItem({ list, i }) {
   console.log(list);
 
   return (
-    <tr key={list.__listId} onClick={setCurrentList}>
+    <tr key={list.listId} onClick={setCurrentList}>
       <td>
         <Link to="/inputs" className="text-color">
           <div>{list.completed ? "true" : "false"}</div>

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import GamesListItem from "../GamesListItem/GamesListItem"
+import GamesListItem from "../2-AddedGames/AddedGames"
 
 function AddedGames() {
   let listNumber = useSelector((store) => store.currentList);

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import UserLists from "../UserLists/UserLists";
+import UserLists from "../2-UserLists/UserLists";
 import { useHistory } from "react-router-dom/";
 import "./UserPage.css";
 

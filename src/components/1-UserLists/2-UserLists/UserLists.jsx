@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import UserListItem from "../UserListItem/UserListItem";
+import UserListItem from "../3-UserListItem/UserListItem";
 
 function UserLists() {
   useEffect(() => {

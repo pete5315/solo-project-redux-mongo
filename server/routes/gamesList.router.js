@@ -4,6 +4,7 @@ const {
 } = require("../modules/authentication-middleware");
 const User = require("../models/user");
 const lastListId = require("../modules/lastListId");
+const lastGameId = require("../modules/lastGameId");
 // const pool = require("../modules/pool");
 
 // const router = express.Router();
@@ -68,6 +69,38 @@ router.post("/", async (req, res) => {
   // res.json(user);
 });
 
+router.post("/addgame/:listid", async (req, res) => { //add a new game to a particular list
+  console.log("reqbody72", req.body);
+  // Add a new list
+  // console.log('newid', newId);
+  console.log(req.params.listid);
+  let newId = await lastGameId(req.params.listid);
+  console.log("newid", newId);
+  User.updateOne(
+    { _id: "64e6493ce50dc851f964407d", "lists.__listId": req.params.listid }, //user id hardcoded currently
+    {
+      $addToSet: {
+        "lists.$.games": [
+          {
+            __gameId: newId+1,
+            name: req.body.newGame,
+            url: req.body.url,
+            betterThan: [],
+            worseThan: [],
+          },
+        ],
+      },
+    } //this is the list object format, __id hardcoded currently
+  )
+    .then((result) => {
+      console.log("Update result:", result);
+    })
+    .catch((error) => {
+      console.error("Error updating nested array:", error);
+    });
+  // res.json(user);
+});
+
 router.put("/:id", async (req, res) => {
   // // Update a user by ID
   // const user = await User.findById(req.params.id);
@@ -83,23 +116,26 @@ router.delete("/:userId/:listId", async (req, res) => {
   const { userId, listId } = req.params;
 
   try {
-    const user = await User.findById('64e6493ce50dc851f964407d'); //userId hardcoded for now
+    const user = await User.findById("64e6493ce50dc851f964407d"); //userId hardcoded for now
 
     if (user) {
       // Use the $pull operator to remove the list by its listId
-      user.lists = user.lists.filter(list => list.__listId !== parseInt(listId, 10));
+      user.lists = user.lists.filter(
+        (list) => list.__listId !== parseInt(listId, 10)
+      );
       await user.save();
 
       console.log(`List with listId ${listId} deleted for user ${userId}`);
-      res.status(200).json({ message: `List with listId ${listId} deleted successfully` });
+      res
+        .status(200)
+        .json({ message: `List with listId ${listId} deleted successfully` });
     } else {
-      res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: "User not found" });
     }
   } catch (error) {
-    console.error('Error deleting list:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error("Error deleting list:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
-
 });
 
 module.exports = router;

@@ -15,6 +15,9 @@ function* getBGG(action) {
     // If a user is logged in, this will return their information
     // from the server session (req.user)
 
+
+
+
     let BGGresponse = yield axios.get(
       `https://boardgamegeek.com/xmlapi2/collection?username=${action.payload.bgg}&own=[0,1]&played=[0,1]`,
       {
@@ -25,33 +28,34 @@ function* getBGG(action) {
     console.log(action.payload)
     yield console.log(BGGresponse.status);
     if (BGGresponse.status===200) {
-    BGGresponse = BGGresponse.data.all;
-    let currentObject = { id: action.payload.id };
-    let jitterator = 0;
-    let collection = [];
-    for (let i = 2; i < BGGresponse.length; i++) {
-      if (BGGresponse[i].tagName === "name") {
-        currentObject.newGame = BGGresponse[i].textContent;
-        jitterator++;
+      BGGresponse = BGGresponse.data.all;
+      let currentObject = { listId: action.payload.id.__listId };
+      let jitterator = 0;
+      let collection = [];
+      for (let i = 2; i < BGGresponse.length; i++) {
+        if (BGGresponse[i].tagName === "name") {
+          currentObject.newGame = BGGresponse[i].textContent;
+          jitterator++;
+        }
+        if (BGGresponse[i].tagName === "thumbnail") {
+          currentObject.thumbnail = BGGresponse[i].textContent;
+          jitterator++;
+        }
+        if (BGGresponse[i].tagName === "image") {
+          currentObject.url = BGGresponse[i].textContent;
+          jitterator++;
+        }
+        if (jitterator === 3) {
+          collection.push(currentObject);
+          currentObject = { listId: action.payload.id.__listId };
+          jitterator = 0;
+        }
       }
-      if (BGGresponse[i].tagName === "thumbnail") {
-        currentObject.thumbnail = BGGresponse[i].textContent;
-        jitterator++;
-      }
-      if (BGGresponse[i].tagName === "image") {
-        currentObject.url = BGGresponse[i].textContent;
-        jitterator++;
-      }
-      if (jitterator === 3) {
-        collection.push(currentObject);
-        currentObject = { id: action.payload.id.id };
-        jitterator = 0;
-      }
+      for (let x of collection) {
+        console.log(x);
+        yield put({ type: "ADD_GAME", payload: x });
     }
-    for (let x of collection) {
-      console.log(x);
-      yield put({ type: "ADD_GAME", payload: x });
-    }}
+  }
   } catch (error) {
     console.log("User get request failed", error);
   }

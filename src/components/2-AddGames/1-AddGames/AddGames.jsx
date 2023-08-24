@@ -18,9 +18,9 @@ function AddGames() {
   }, []);
 
   function checkIfInList() {
-    if (list.id) {
+    if (list.__listId) {
       console.log(list.id);
-      dispatch({ type: "GET_GAMES", payload: { id: list.id } });
+      dispatch({ type: "SET_GAMES", payload: list.games });
       return;
     } else {
       // dispatch({ type: "SET_NEW_LIST" });
@@ -34,8 +34,6 @@ function AddGames() {
       payload: { bgg: bggName, id: list },
     });
   }
-
-  console.log(list);
 
   function submitTheData(event) {
     event.preventDefault();

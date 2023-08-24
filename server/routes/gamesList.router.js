@@ -29,13 +29,32 @@ router.get("/", async (req, res) => {
     });
 });
 
-router.get("/:id", async (req, res) => {
-  // // Get all users
-  // const users = await User.find();
-  // res.json(users);
+router.get("/games/:listid", async (req, res) => { //get the games from a particular list
+  const listId = req.params.listid;
+  console.log(listId);
+  try {
+    const user = await User.findOne(
+      {
+        _id: "64e6493ce50dc851f964407d", // User ID hardcoded for now
+        "lists.__listId": listId,
+      },
+      { "lists.$": 1 }
+    );
+
+    if (user && user.lists.length > 0) {
+      const list = user.lists[0];
+      res.status(200).json(list);
+    } else {
+      res.status(404).send("List not found");
+    }
+  } catch (error) {
+    console.error("Error retrieving list:", error);
+    res.status(500).send("Error retrieving list");
+  }
+
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req, res) => { //make a new list
   console.log("requser42", req.user);
   // Add a new list
   let newId = await lastListId(req.params.id, res);
@@ -98,7 +117,7 @@ router.post("/addgame/:listid", async (req, res) => { //add a new game to a part
     .catch((error) => {
       console.error("Error updating nested array:", error);
     });
-  // res.json(user);
+  res.sendStatus(200);
 });
 
 router.put("/:id", async (req, res) => {
@@ -135,6 +154,32 @@ router.delete("/:userId/:listId", async (req, res) => {
   } catch (error) {
     console.error("Error deleting list:", error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.delete("/deletegame/:listId/:gameId", async (req, res) => {
+  const listId = req.params.listId;
+  const gameId = req.params.gameId;
+
+  try {
+    await User.updateOne(
+      {
+        _id: "64e6493ce50dc851f964407d", // User ID hardcoded for now
+        "lists.__listId": listId,
+      },
+      {
+        $pull: {
+          "lists.$.games": {
+            __gameId: gameId,
+          },
+        },
+      }
+    );
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error("Error deleting game:", error);
+    res.status(500).send("Error deleting game");
   }
 });
 

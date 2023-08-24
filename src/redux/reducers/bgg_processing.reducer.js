@@ -1,5 +1,4 @@
 const bggProcessing = (state = null, action) => {
-  console.log(action);
   switch (action.type) {
     case 'SET_BGG_PROCESSING':
       return action.payload;

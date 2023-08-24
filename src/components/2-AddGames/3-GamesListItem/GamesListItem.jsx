@@ -5,14 +5,13 @@ import "./GamesListItem.css";
 function GamesListItem({ game, i }) {
   let dispatch = useDispatch();
   let currentList = useSelector((store) => store.currentList);
-  console.log(game);
   function removeGame() {
     dispatch({
       type: "DELETE_GAME",
       payload: {
         game: game,
-        listID: currentList,
-        id: game.id,
+        listID: currentList.__listId,
+        id: game.__gameId,
         getRandom: false,
       },
     });
@@ -20,9 +19,9 @@ function GamesListItem({ game, i }) {
 
   return (
     <tr key={i}>
-      <td key={i}>
+      <td>
         <span>
-          <img className="image" src={game.thumbnail} />
+          <img className="image" src={game.url} />
         </span>
       </td>
       <td className="listImage" >{game.name}</td>

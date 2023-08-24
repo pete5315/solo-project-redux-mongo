@@ -4,6 +4,7 @@ const gamesSchema = new mongoose.Schema({
   __gameId: Number,
   name: String,
   url: String,
+  thumbnail: String,
   betterThan: Array,
   worseThan: Array,
 })

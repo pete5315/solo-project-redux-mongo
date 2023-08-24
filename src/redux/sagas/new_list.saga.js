@@ -14,6 +14,7 @@ function* newList(action) {
     // from the server session (req.user)
     let atlasResponse = yield axios.post('/api/atlas/list/', config);
     console.log(atlasResponse)
+    yield put({type: "FETCH_USER_LISTS"});
     // let response = yield axios.get('/api/newlist/', config);
     // response=response.data[0]
     // yield put({ type: 'SET_CURRENT_LIST', payload: {id: response, completed: false }});

@@ -21,7 +21,7 @@ import LoginPage from "../LoginPage/LoginPage";
 import RegisterPage from "../RegisterPage/RegisterPage";
 import "./App.css";
 import AddGames from "../2-AddGames/1-AddGames/AddGames";
-import RankGames from "../RankGames/RankGames";
+import RankGames from "../3-RankGames/1-RankGames/RankGames";
 import ListRankedGames from "../ListRankedGames/ListRankedGames";
 
 import Divider from "@mui/material/Divider";

@@ -120,6 +120,33 @@ router.post("/addgame/:listid", async (req, res) => { //add a new game to a part
   res.sendStatus(200);
 });
 
+router.post("/addmanygames/:listid", async (req, res) => { //add a new game to a particular list
+  let highestGameId = await lastGameId(req.params.listid);
+  const startingGameId = highestGameId.length > 0 ? highestGameId[0].maxGameId + 1 : 1;
+  
+  let newGames = req.body.collection;
+  newGames.forEach((game, index) => {
+    game.__gameId = startingGameId + index;
+    game.name = game.newGame
+  });
+  console.log(newGames);
+  await User.updateOne(
+    { "lists.__listId": req.params.listid }, // Find the list by ID
+    {
+      $push: {
+        "lists.$.games": { $each: newGames }, // Use $each to push multiple games at once
+      },
+    }
+  )
+    .then((result) => {
+      console.log("Update result:", result);
+    })
+    .catch((error) => {
+      console.error("Error updating games array:", error);
+    });
+  res.sendStatus(200);
+});
+
 router.put("/:id", async (req, res) => {
   // // Update a user by ID
   // const user = await User.findById(req.params.id);

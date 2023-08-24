@@ -1,7 +1,12 @@
 import axios from "axios";
-import { put, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest } from "redux-saga/effects";
 import xml2js from "xml2js";
 import React, { useState } from "react";
+import { Gamepad } from "@mui/icons-material";
+
+function* addGameAsync(game) {
+  yield put({ type: 'ADD_GAME', payload: game });
+}
 
 // worker Saga: will be fired on "FETCH_USER" actions
 function* getBGG(action) {
@@ -51,17 +56,26 @@ function* getBGG(action) {
           jitterator = 0;
         }
       }
-      for (let x of collection) {
-        console.log(x);
-        yield put({ type: "ADD_GAME", payload: x });
-    }
+    //   for (let game of collection) {
+    //     console.log(game);
+    //     yield call(addGameAsync, game);
+    // }
+    yield axios.post(
+      "/api/atlas/list/addmanygames/" + action.payload.id.__listId,
+      {
+        collection
+      },
+      config
+    );
+    yield put({
+      type: "GET_GAMES",
+      payload: { listId: action.payload.id.__listId },
+    });
   }
   } catch (error) {
     console.log("User get request failed", error);
   }
 }
-
-
 
 function* getBGGSaga() {
   yield takeLatest("GET_BGG", getBGG);

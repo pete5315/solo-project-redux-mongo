@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom/";
 import Grid from "@mui/material/Grid";
-import FlipCard from "../FlipCard/FlipCard";
+import FlipCard from "../2-FlipCard/FlipCard";
 import "./RankGames.css";
 import CircularProgress from "@mui/material/CircularProgress";
 import CircularWithValueLabel from "./CircularProgressTracker";

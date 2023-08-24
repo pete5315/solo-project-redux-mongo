@@ -1,5 +1,5 @@
 import { useState } from "react";
-import GameCard from "../GameCard/GameCard";
+import GameCard from "../3-GameCard/GameCard";
 import "./FlipCard.css";
 
 function FlipCard({game, i}) {

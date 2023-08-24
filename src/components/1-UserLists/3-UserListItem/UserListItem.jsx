@@ -20,12 +20,10 @@ function UserListItem({ list, i }) {
     dispatch({
       type: "DELETE_LIST",
       payload: {
-        id: list.listId,
+        id: list.__listId,
       },
     });
   }
-
-  console.log(list);
 
   return (
     <tr key={list.listId} onClick={setCurrentList}>

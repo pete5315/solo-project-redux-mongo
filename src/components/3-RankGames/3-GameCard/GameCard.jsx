@@ -23,9 +23,10 @@ function GameCard(props) {
   const currentBest = currentRank.best;
   const currentWorst = currentRank.worst;
 
+  console.log(props.game);
   function setBest() {
-    console.log(props.game.id);
-    if (currentBest === props.game.id) {
+    console.log(props.game.__gameId);
+    if (currentBest === props.game.__gameId) {
       dispatch({ type: "UNSET_BEST" });
     } else {
       setDOMBest(true);
@@ -35,9 +36,9 @@ function GameCard(props) {
           type: "SET_CURRENT_RANK",
           payload: {
             ...currentRank,
-            best: props.game.id,
+            best: props.game.__gameId,
             randomGames,
-            listID: currentList.id,
+            listID: currentList._id,
           },
         });
       } else {
@@ -46,9 +47,9 @@ function GameCard(props) {
           type: "SEND_CURRENT_RANK",
           payload: {
             ...currentRank,
-            best: props.game.id,
+            best: props.game.__gameId,
             randomGames,
-            listID: currentList.id,
+            listID: currentList._id,
             callbackHistory,
           },
         });
@@ -56,8 +57,8 @@ function GameCard(props) {
     }
   }
   function setWorst() {
-    console.log(props.game.id);
-    if (currentWorst === props.game.id) {
+    console.log(props.game.__gameId);
+    if (currentWorst === props.game.__gameId) {
       dispatch({ type: "UNSET_WORST" });
     } else {
       setDOMWorst(true);
@@ -68,8 +69,8 @@ function GameCard(props) {
           type: "SEND_CURRENT_RANK",
           payload: {
             ...currentRank,
-            worst: props.game.id,
-            listID: currentList.id,
+            worst: props.game.__gameId,
+            listID: currentList._id,
             callbackHistory,
           },
         });
@@ -78,10 +79,10 @@ function GameCard(props) {
           type: "SET_CURRENT_RANK",
           payload: {
             ...currentRank,
-            worst: props.game.id,
+            worst: props.game.__gameId,
             randomGames,
             callbackHistory,
-            listID: currentList.id,
+            listID: currentList._id,
           },
         });
       }
@@ -92,8 +93,8 @@ function GameCard(props) {
       type: "DELETE_GAME",
       payload: {
         game: props.game,
-        listID: currentList.id,
-        id: props.game.id,
+        listID: currentList._id,
+        id: props.game.__gameId,
         getRandom: true,
       },
     });
@@ -112,9 +113,9 @@ function GameCard(props) {
           p: 2,
           my: 0.5,
           backgroundColor:
-            currentBest === props.game.id
+            currentBest === props.game.__gameId
               ? "rgb(153, 255, 153)"
-              : currentWorst === props.game.id
+              : currentWorst === props.game.__gameId
               ? "rgb(255, 141, 141)"
               : "white",
         }}
@@ -134,7 +135,7 @@ function GameCard(props) {
             }}
             onClick={setBest}
           >
-            {currentBest===props.game.id ? 'undo' : 'best'}
+            {currentBest===props.game.__gameId ? 'undo' : 'best'}
           </Button>
         </CardActions>
         <CardMedia
@@ -163,7 +164,7 @@ function GameCard(props) {
             }}
             onClick={setWorst}
           >
-            {currentWorst===props.game.id ? 'undo' : 'worst'}
+            {currentWorst===props.game.__gameId ? 'undo' : 'worst'}
           </Button>
           <Button
             variant="contained"

@@ -27,7 +27,7 @@ const userRouter = require('./routes/user.router');
 const userAtlasRouter = require('./routes/userAtlas.router.js');
 const gamesListRouter = require('./routes/gamesList.router.js');
 const randomGamesRouter = require('./routes/randomGames.router')
-
+const updateRankRouter = require('./routes/updateRank.router')
 // Body parser middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -64,6 +64,7 @@ app.use('/api/user', userRouter);
 app.use('/api/atlas/user', userAtlasRouter);
 app.use('/api/atlas/list', gamesListRouter);
 app.use('/api/atlas/randomgames', randomGamesRouter);
+app.use('/api/atlas/updaterank', updateRankRouter);
 
 // Serve static files
 app.use(express.static('build'));

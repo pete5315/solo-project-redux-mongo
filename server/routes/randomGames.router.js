@@ -10,68 +10,38 @@ const { number } = require("prop-types");
 
 const router = express.Router();
 
-function getRandomGame(i, fullGameList) { //put in a module
-  while (i < 1) {
-    let randomNumber = Math.floor(Math.random() * fullGameList.length);
-    console.log(
-      fullGameList[randomNumber].betterThan.length +
-        fullGameList[randomNumber].worseThan.length +
-        1
-    );
-    if (
-      fullGameList.length >
-      fullGameList[randomNumber].betterThan.length +
-        fullGameList[randomNumber].worseThan.length +
-        1
-    ) {
-      return fullGameList[randomNumber];
-    }
-  }
-}
+const getRandomGame = require("../modules/randomGame");
+
 router.get(
   "/:listid",
   rejectUnauthenticated,
   async (req, res) => {
     const listId = req.params.listid;
     console.log(listId);
-    let fullGameList = [];
+    let fullGameArray = [];
     await User.findOne(
       {
-        _id: "64e6493ce50dc851f964407d", // User ID hardcoded for now
-        "lists.__listId": listId,
+        _id: "64e8f95c35b3cb20363ad4ed", // User ID hardcoded for now
+        "lists._id": listId,
       },
       { "lists.$": 1 }
     )
       .then((documents) => {
-        fullGameList = JSON.parse(JSON.stringify(documents, null, 2)).lists[0]
+        fullGameArray = JSON.parse(JSON.stringify(documents, null, 2)).lists[0]
           .games; //convert the json cursor to an object
       })
       .catch((error) => {
         console.log("error27");
       });
-    let i = 0;
-    let firstRandomGame = getRandomGame(i, fullGameList);
-    let totalNumberOfRandomGames = //maybe put in a module
-      fullGameList.length -
-        firstRandomGame.betterThan.length -
-        firstRandomGame.worseThan.length -
-        1 >
-      4
-        ? 4
-        : fullGameList.length -
-          firstRandomGame.betterThan.length -
-          firstRandomGame.worseThan.length -
-          1;
-    console.log(totalNumberOfRandomGames);
-    let numberOfRandomGames = 1;
-    while (numberOfRandomGames < totalNumberOfRandomGames) {
-      let partialGameList = fullGameList.filter(
-        (game1) =>
-          ![firstRandomGame].some((game2) => game2.__gameId === game1.__gameId)
-      );
-      console.log(partialGameList);
-      numberOfRandomGames++;
+    let randomGamesObject = { maxRandomGameCount: 4, games: [] };
+    console.log(randomGamesObject);
+    while (randomGamesObject.games.length !== randomGamesObject.maxRandomGameCount) {
+      randomGamesObject = getRandomGame(randomGamesObject, fullGameArray);
+      console.log("40", randomGamesObject);
     }
+    res.send(randomGamesObject);
+    // console.log("42", randomGamesObject);
+    // }
   }
 
   // const client = await pool.connect();

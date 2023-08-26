@@ -1,18 +1,19 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-import User from './user';
+import User from "./user";
+import List from "./list";
+import Game from "./game";
+import Matchup from "./matchup";
+import Result from "./result";
 
 const connectDb = () => {
-  return mongoose.connect(
-    `${uri}`,
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  );
+  return mongoose.connect(`${uri}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
 };
 
-const models = { User,  };
+const models = { User, List, Game, Matchup, Result };
 
 export { connectDb };
 

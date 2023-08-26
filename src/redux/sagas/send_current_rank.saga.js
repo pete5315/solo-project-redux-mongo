@@ -10,7 +10,7 @@ function* sendCurrentRank(action) {
       withCredentials: true,
     };
     const result = yield axios.post(
-      `/api/updaterank/${action.payload.listID}`,
+      `/api/atlas/updaterank/${action.payload.listID}`,
       {
         currentBest: action.payload.best,
         currentWorst: action.payload.worst,

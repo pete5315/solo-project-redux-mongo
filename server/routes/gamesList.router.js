@@ -3,8 +3,10 @@ const {
   rejectUnauthenticated,
 } = require("../modules/authentication-middleware");
 const User = require("../models/user");
+const List = require("../models/list");
 const lastListId = require("../modules/lastListId");
 const lastGameId = require("../modules/lastGameId");
+const mongoose = require("mongoose");
 // const pool = require("../modules/pool");
 
 // const router = express.Router();
@@ -16,27 +18,32 @@ console.log("in users router");
 
 //get all lists for a particular user
 router.get("/", async (req, res) => {
+  let jsonResult;
   // Get all lists
   await User.find({
-    _id: "64e6493ce50dc851f964407d",
+    _id: "64e8f95c35b3cb20363ad4ed",
   }) //will need to include the specific userid when authentication/login is working, hardcoded for now
     .then((documents) => {
-      const jsonResult = JSON.parse(JSON.stringify(documents, null, 2)); //this converts the cursor to object format
-      res.send(jsonResult[0].lists); //this should return the id of the newest list just added
+      jsonResult = JSON.parse(JSON.stringify(documents, null, 2)); //this converts the cursor to object format
+      console.log(jsonResult[0].lists);
+      // res.send(jsonResult[0].lists); //this should return the id of the newest list just added
     })
     .catch((error) => {
       console.error("Error fetching and converting documents:", error);
     });
+  const lists = await List.find({ _id: { $in: jsonResult[0].lists } });
+  res.send(lists);
 });
 
-router.get("/games/:listid", async (req, res) => { //get the games from a particular list
+router.get("/games/:listid", async (req, res) => {
+  //get the games from a particular list
   const listId = req.params.listid;
   console.log(listId);
   try {
     const user = await User.findOne(
       {
-        _id: "64e6493ce50dc851f964407d", // User ID hardcoded for now
-        "lists.__listId": listId,
+        _id: "64e8f95c35b3cb20363ad4ed", // User ID hardcoded for now
+        "lists._id": listId,
       },
       { "lists.$": 1 }
     );
@@ -51,44 +58,74 @@ router.get("/games/:listid", async (req, res) => { //get the games from a partic
     console.error("Error retrieving list:", error);
     res.status(500).send("Error retrieving list");
   }
-
 });
 
-router.post("/", async (req, res) => { //make a new list
+router.post("/", async (req, res) => {
+  //make a new list
   console.log("requser42", req.user);
-  // Add a new list
-  let newId = await lastListId(req.params.id, res);
-  // console.log('newid', newId);
-  console.log(await lastListId(req.params.id, res));
-  User.updateOne(
-    //this adds a new list
-    // { _id: req.user.id, 'orders.orderId': orderId }, //need req.user.id to show the _id value from mongo
-    { _id: "64e6493ce50dc851f964407d" }, //user id hardcoded currently
-    {
-      $push: {
-        lists: [
-          {
-            __listId: newId + 1,
-            games: [],
-            matchups: [],
-            results: [],
-            lastModifiedDate: new Date(),
-            completed: false,
-          },
-        ],
-      },
-    } //this is the list object format, __id hardcoded currently
-  )
-    .then((result) => {
-      console.log("Update result:", result);
-    })
-    .catch((error) => {
-      console.error("Error updating nested array:", error);
-    });
+  // let newId = await lastListId(req.params.id);
+  // console.log(newId, "newid")
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    // Create a new list
+    const newList = await List.create(
+      [
+        {
+          // _id: newId + 1,
+          completed: false,
+          lastModifiedDate: new Date(),
+          games: [],
+        },
+      ],
+      { session }
+    );
+    console.log(newList[0]._id);
+    // Update user's lists array
+    await User.updateOne(
+      { _id: "64e8f95c35b3cb20363ad4ed" },
+      { $push: { lists: newList[0]._id } },
+      { session }
+    );
+
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+  // User.updateOne(
+  //   //this adds a new list
+  //   // { _id: req.user.id, 'orders.orderId': orderId }, //need req.user.id to show the _id value from mongo
+  //   { _id: "64e8f95c35b3cb20363ad4ed" }, //user id hardcoded currently
+  //   {
+  //     $push: {
+  //       lists: [
+  //         {
+  //           _id: newId + 1,
+  //           games: [],
+  //           matchups: [],
+  //           results: [],
+  //           lastModifiedDate: new Date(),
+  //           completed: false,
+  //         },
+  //       ],
+  //     },
+  //   } //this is the list object format, __id hardcoded currently
+  // )
+  //   .then((result) => {
+  //     console.log("Update result:", result);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error updating nested array:", error);
+  //   });
   // res.json(user);
+  res.sendStatus(200);
 });
 
-router.post("/addgame/:listid", async (req, res) => { //add a new game to a particular list
+router.post("/addgame/:listid", async (req, res) => {
+  //add a new game to a particular list
   console.log("reqbody72", req.body);
   // Add a new list
   // console.log('newid', newId);
@@ -96,12 +133,12 @@ router.post("/addgame/:listid", async (req, res) => { //add a new game to a part
   let newId = await lastGameId(req.params.listid);
   console.log("newid", newId);
   User.updateOne(
-    { _id: "64e6493ce50dc851f964407d", "lists.__listId": req.params.listid }, //user id hardcoded currently
+    { _id: "64e8f95c35b3cb20363ad4ed", "lists._id": req.params.listid }, //user id hardcoded currently
     {
       $addToSet: {
         "lists.$.games": [
           {
-            __gameId: newId+1,
+            __gameId: newId + 1,
             name: req.body.newGame,
             url: req.body.url,
             betterThan: [],
@@ -120,18 +157,20 @@ router.post("/addgame/:listid", async (req, res) => { //add a new game to a part
   res.sendStatus(200);
 });
 
-router.post("/addmanygames/:listid", async (req, res) => { //add a new game to a particular list
+router.post("/addmanygames/:listid", async (req, res) => {
+  //add a new game to a particular list
   let highestGameId = await lastGameId(req.params.listid);
-  const startingGameId = highestGameId.length > 0 ? highestGameId[0].maxGameId + 1 : 1;
-  
+  const startingGameId =
+    highestGameId.length > 0 ? highestGameId[0].maxGameId + 1 : 1;
+
   let newGames = req.body.collection;
   newGames.forEach((game, index) => {
     game.__gameId = startingGameId + index;
-    game.name = game.newGame
+    game.name = game.newGame;
   });
   console.log(newGames);
   await User.updateOne(
-    { "lists.__listId": req.params.listid }, // Find the list by ID
+    { "lists._id": req.params.listid }, // Find the list by ID
     {
       $push: {
         "lists.$.games": { $each: newGames }, // Use $each to push multiple games at once
@@ -162,12 +201,12 @@ router.delete("/:userId/:listId", async (req, res) => {
   const { userId, listId } = req.params;
 
   try {
-    const user = await User.findById("64e6493ce50dc851f964407d"); //userId hardcoded for now
+    const user = await User.findById("64e8f95c35b3cb20363ad4ed"); //userId hardcoded for now
 
     if (user) {
       // Use the $pull operator to remove the list by its listId
       user.lists = user.lists.filter(
-        (list) => list.__listId !== parseInt(listId, 10)
+        (list) => list._id !== parseInt(listId, 10)
       );
       await user.save();
 
@@ -191,8 +230,8 @@ router.delete("/deletegame/:listId/:gameId", async (req, res) => {
   try {
     await User.updateOne(
       {
-        _id: "64e6493ce50dc851f964407d", // User ID hardcoded for now
-        "lists.__listId": listId,
+        _id: "64e8f95c35b3cb20363ad4ed", // User ID hardcoded for now
+        "lists._id": listId,
       },
       {
         $pull: {

@@ -29,7 +29,7 @@ function UserListItem({ list, i }) {
     <tr key={list.listId} onClick={setCurrentList}>
       <td>
         <Link to="/inputs" className="text-color">
-          <div>{list.completed ? "true" : "false"}</div>
+          <div>{list.completed ? "Completed" : "Incomplete"}</div>
         </Link>
       </td>
       <td>{list.games.length && list.games.length}</td>

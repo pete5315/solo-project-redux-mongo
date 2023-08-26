@@ -16,14 +16,14 @@ function* fetchUserLists() {
     const atlasResponse = yield axios.get("/api/atlas/list/", config);
     console.log(atlasResponse);
     console.log(atlasResponse.data);
-    let userListData = {
-      games: atlasResponse.data.games,
-      lastModifiedDate: atlasResponse.data.lastModifiedDate,
-      matchups: atlasResponse.data.matchups,
-      results: atlasResponse.data.results,
-      listId: atlasResponse.data.listId,
-      userId: atlasResponse.data._id,
-    };
+    // let userListData = {
+    //   games: atlasResponse.data.games,
+    //   lastModifiedDate: atlasResponse.data.lastModifiedDate,
+    //   matchups: atlasResponse.data.matchups,
+    //   results: atlasResponse.data.results,
+    //   listId: atlasResponse.data.listId,
+    //   userId: atlasResponse.data._id,
+    // };
 
     // const response = yield axios.get('/api/userlist/', config);
 

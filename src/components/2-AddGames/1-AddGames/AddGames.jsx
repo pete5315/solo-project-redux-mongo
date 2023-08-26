@@ -12,13 +12,15 @@ function AddGames() {
   let list = useSelector((store) => store.currentList);
   let bggProcessing = useSelector((store) => store.bggProcessing);
 
+  console.log(list);
+
   useEffect(() => {
     checkIfInList();
     dispatch({ type: "SET_CURRENT_STEP", payload: 1 });
   }, []);
 
   function checkIfInList() {
-    if (list.__listId) {
+    if (list._id) {
       console.log(list.id);
       dispatch({ type: "SET_GAMES", payload: list.games });
       return;
@@ -31,20 +33,20 @@ function AddGames() {
     event.preventDefault();
     dispatch({
       type: "GET_BGG",
-      payload: { bgg: bggName, id: list },
+      payload: { bgg: bggName, id: list._id },
     });
   }
 
   function submitTheData(event) {
     event.preventDefault();
-    console.log(list.__listId);
-    if (list.__listId === null) {
-      list.__listId = 1;
+    console.log(list._id);
+    if (list._id === null) {
+      list._id = 1;
     }
 
     dispatch({
       type: "ADD_GAME",
-      payload: { newGame: newGameName, listId: list.__listId, url: null },
+      payload: { newGame: newGameName, listId: list._id, url: null },
     });
     setNewGameName("");
   }

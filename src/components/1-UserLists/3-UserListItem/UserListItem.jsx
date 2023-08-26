@@ -5,7 +5,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 function UserListItem({ list, i }) {
   let dispatch = useDispatch();
-
+  console.log(list);
   function setCurrentList() {
     dispatch({
       type: "SET_CURRENT_LIST",
@@ -32,7 +32,7 @@ function UserListItem({ list, i }) {
           <div>{list.completed ? "Completed" : "Incomplete"}</div>
         </Link>
       </td>
-      <td>{list.games.length && list.games.length}</td>
+      <td>{list.games && list.games.length && list.games.length}</td>
       {/* <td>
         {list.date.slice(5, 7) +
           "-" +

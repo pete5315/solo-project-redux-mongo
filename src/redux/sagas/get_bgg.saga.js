@@ -34,7 +34,7 @@ function* getBGG(action) {
     yield console.log(BGGresponse.status);
     if (BGGresponse.status===200) {
       BGGresponse = BGGresponse.data.all;
-      let currentObject = { listId: action.payload.id.__listId };
+      let currentObject = { listId: action.payload.id };
       let jitterator = 0;
       let collection = [];
       for (let i = 2; i < BGGresponse.length; i++) {
@@ -52,7 +52,7 @@ function* getBGG(action) {
         }
         if (jitterator === 3) {
           collection.push(currentObject);
-          currentObject = { listId: action.payload.id.__listId };
+          currentObject = { listId: action.payload.id };
           jitterator = 0;
         }
       }
@@ -60,17 +60,19 @@ function* getBGG(action) {
     //     console.log(game);
     //     yield call(addGameAsync, game);
     // }
+    console.log(action.payload.id)
+    console.log(collection);
     yield axios.post(
-      "/api/atlas/list/addmanygames/" + action.payload.id.__listId,
+      "/api/atlas/list/addmanygames/" + action.payload.id,
       {
-        collection
+        collection, 
       },
       config
     );
-    yield put({
-      type: "GET_GAMES",
-      payload: { listId: action.payload.id.__listId },
-    });
+  //   yield put({
+  //     type: "GET_GAMES",
+  //     payload: { listId: action.payload.id },
+  //   });
   }
   } catch (error) {
     console.log("User get request failed", error);

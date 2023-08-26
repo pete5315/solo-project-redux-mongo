@@ -54,7 +54,7 @@ function* getGames(action) {
       "/api/atlas/list/games/" + action.payload.listId,
       config
     );
-    console.log(games.data.games);
+    console.log(games);
     let sendGames = [];
     for (let x of games.data.games) {
       console.log(x);
@@ -65,7 +65,7 @@ function* getGames(action) {
         thumbnail: x.thumbnail,
       });
     }
-    console.log(sendGames);
+    console.log(sendGames, 'sendgames');
     yield put({ type: "SET_GAMES", payload: sendGames });
   } catch (error) {
     console.log("User get request failed", error);

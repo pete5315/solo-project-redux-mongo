@@ -11,6 +11,7 @@ function UserPage() {
 
   useEffect(() => {
     dispatch({ type: "SET_CURRENT_STEP", payload: 0 });
+    dispatch({ type: "UNSET_CURRENT_LIST" });
   }, []);
 
   function newList() {

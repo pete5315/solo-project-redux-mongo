@@ -4,9 +4,11 @@ const {
 } = require("../modules/authentication-middleware");
 const User = require("../models/user");
 const List = require("../models/list");
+const Game = require("../models/game");
 const lastListId = require("../modules/lastListId");
 const lastGameId = require("../modules/lastGameId");
 const mongoose = require("mongoose");
+const getListandGames = require("../modules/getListandGames");
 // const pool = require("../modules/pool");
 
 // const router = express.Router();
@@ -18,29 +20,30 @@ console.log("in users router");
 
 //get all lists for a particular user
 router.get("/", async (req, res) => {
-  let jsonResult;
+  let jsonResult, objectIdArray;
   // Get all lists
   await User.find({
     _id: "64e8f95c35b3cb20363ad4ed",
   }) //will need to include the specific userid when authentication/login is working, hardcoded for now
     .then((documents) => {
       jsonResult = JSON.parse(JSON.stringify(documents, null, 2)); //this converts the cursor to object format
-      console.log(jsonResult[0].lists);
+      userLists = jsonResult[0].lists;
+      objectIdArray = documents[0].lists;
       // res.send(jsonResult[0].lists); //this should return the id of the newest list just added
     })
     .catch((error) => {
       console.error("Error fetching and converting documents:", error);
     });
-  const lists = await List.find({ _id: { $in: jsonResult[0].lists } });
-  res.send(lists);
+  let aggregateResult = await getListandGames(objectIdArray);
+  res.send(aggregateResult);
 });
 
 router.get("/games/:listid", async (req, res) => {
   //get the games from a particular list
   const listId = req.params.listid;
-  console.log(listId);
+  console.log("reqbody", req.body);
   try {
-    const user = await User.findOne(
+    const list = await List.findOne(
       {
         _id: "64e8f95c35b3cb20363ad4ed", // User ID hardcoded for now
         "lists._id": listId,
@@ -95,6 +98,7 @@ router.post("/", async (req, res) => {
   } finally {
     session.endSession();
   }
+
   // User.updateOne(
   //   //this adds a new list
   //   // { _id: req.user.id, 'orders.orderId': orderId }, //need req.user.id to show the _id value from mongo
@@ -130,60 +134,107 @@ router.post("/addgame/:listid", async (req, res) => {
   // Add a new list
   // console.log('newid', newId);
   console.log(req.params.listid);
-  let newId = await lastGameId(req.params.listid);
-  console.log("newid", newId);
-  User.updateOne(
-    { _id: "64e8f95c35b3cb20363ad4ed", "lists._id": req.params.listid }, //user id hardcoded currently
-    {
-      $addToSet: {
-        "lists.$.games": [
-          {
-            __gameId: newId + 1,
-            name: req.body.newGame,
-            url: req.body.url,
-            betterThan: [],
-            worseThan: [],
-          },
-        ],
-      },
-    } //this is the list object format, __id hardcoded currently
-  )
-    .then((result) => {
-      console.log("Update result:", result);
-    })
-    .catch((error) => {
-      console.error("Error updating nested array:", error);
-    });
-  res.sendStatus(200);
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    // Create a new game
+    const newGame = await Game.create(
+      [
+        {
+          name: req.body.newGame,
+          url: req.body.url,
+          thumbnail: req.body.thumbnail,
+        },
+      ],
+      { session }
+    );
+    console.log(newGame[0]._id);
+    // Update list's games array
+    await List.updateOne(
+      { _id: req.params.listid },
+      { $push: { games: newGame[0]._id } },
+      { session }
+    );
+
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+
+  // let newId = await lastGameId(req.params.listid);
+  // console.log("newid", newId);
+  // User.updateOne(
+  //   { _id: "64e8f95c35b3cb20363ad4ed", "lists._id": req.params.listid }, //user id hardcoded currently
+  //   {
+  //     $addToSet: {
+  //       "lists.$.games": [
+  //         {
+  //           __gameId: newId + 1,
+  //           name: req.body.newGame,
+  //           url: req.body.url,
+  //           betterThan: [],
+  //           worseThan: [],
+  //         },
+  //       ],
+  //     },
+  //   } //this is the list object format, __id hardcoded currently
+  // )
+  //   .then((result) => {
+  //     console.log("Update result:", result);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error updating nested array:", error);
+  //   });
+  // res.sendStatus(200);
 });
 
 router.post("/addmanygames/:listid", async (req, res) => {
-  //add a new game to a particular list
-  let highestGameId = await lastGameId(req.params.listid);
-  const startingGameId =
-    highestGameId.length > 0 ? highestGameId[0].maxGameId + 1 : 1;
-
   let newGames = req.body.collection;
-  newGames.forEach((game, index) => {
-    game.__gameId = startingGameId + index;
-    game.name = game.newGame;
-  });
   console.log(newGames);
-  await User.updateOne(
-    { "lists._id": req.params.listid }, // Find the list by ID
-    {
-      $push: {
-        "lists.$.games": { $each: newGames }, // Use $each to push multiple games at once
-      },
+  let addedGamesArray = [];
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    // Create a new game
+    for (let newGame of newGames) {
+      addedGamesArray.push(
+        await Game.create(
+          [
+            {
+              name: newGame.newGame,
+              url: newGame.url,
+              thumbnail: newGame.thumbnail,
+            },
+          ],
+          { session }
+        )
+      );
     }
-  )
-    .then((result) => {
-      console.log("Update result:", result);
-    })
-    .catch((error) => {
-      console.error("Error updating games array:", error);
-    });
-  res.sendStatus(200);
+    console.log(addedGamesArray);
+    // console.log(newGame[0]._id);
+    // Update list's games array
+    for (let addedGame of addedGamesArray) {
+      console.log(addedGame[0]._id, req.params.listid);
+      await List.updateOne(
+        { _id: req.params.listid },
+        { $push: { games: addedGame[0]._id } },
+        { session }
+      );
+    }
+
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+  
+  res.sendStatus(getListandGames([req.params.listid]));
 });
 
 router.put("/:id", async (req, res) => {

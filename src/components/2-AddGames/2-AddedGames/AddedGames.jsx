@@ -3,10 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import GamesListItem from "../3-GamesListItem/GamesListItem"
 
 function AddedGames() {
-  let listNumber = useSelector((store) => store.currentList);
-  const games = useSelector((store) => store.games);
+  let list = useSelector((store) => store.currentList);
 
-  if (games && !games[0]) {
+  if (list.gamesInfo && !list.gamesInfo[0]) {
     return
   }
 
@@ -19,7 +18,7 @@ function AddedGames() {
         </tr>
       </thead>
       <tbody>
-        {games.map((game, i) => <GamesListItem game={game} i={i}/>)} 
+        {list.gamesInfo.map((game, i) => <GamesListItem game={game} i={i}/>)} 
       </tbody>
     </table>
   );

@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const gameSchema = new mongoose.Schema({
-  __gameId: Number,
   name: String,
   url: String,
   thumbnail: String,

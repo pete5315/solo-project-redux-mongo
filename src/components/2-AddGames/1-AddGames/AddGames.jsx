@@ -12,8 +12,6 @@ function AddGames() {
   let list = useSelector((store) => store.currentList);
   let bggProcessing = useSelector((store) => store.bggProcessing);
 
-  console.log(list);
-
   useEffect(() => {
     checkIfInList();
     dispatch({ type: "SET_CURRENT_STEP", payload: 1 });
@@ -33,7 +31,7 @@ function AddGames() {
     event.preventDefault();
     dispatch({
       type: "GET_BGG",
-      payload: { bgg: bggName, id: list._id },
+      payload: { bgg: bggName, listId: list._id },
     });
   }
 

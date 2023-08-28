@@ -38,6 +38,29 @@ router.get("/", async (req, res) => {
   res.send(aggregateResult);
 });
 
+router.get("/:listid", async (req, res) => {
+  let jsonResult, objectIdArray;
+  let listId = req.params.listid;
+  // Get all lists
+  await List.find({
+    _id: listId,
+  }) //will need to include the specific userid when authentication/login is working, hardcoded for now
+    .then((documents) => {
+      console.log(documents);
+      jsonResult = JSON.parse(JSON.stringify(documents, null, 2)); //this converts the cursor to object format
+      userLists = jsonResult[0].lists;
+      objectIdArray = documents[0]._id;
+      // res.send(jsonResult[0].lists); //this should return the id of the newest list just added
+    })
+    .catch((error) => {
+      console.error("Error fetching and converting documents:", error);
+    });
+  console.log(objectIdArray);
+  let aggregateResult = await getListandGames([objectIdArray]);
+  console.log(aggregateResult);
+  res.send(aggregateResult);
+});
+
 router.get("/games/:listid", async (req, res) => {
   //get the games from a particular list
   const listId = req.params.listid;
@@ -51,7 +74,7 @@ router.get("/games/:listid", async (req, res) => {
       { "lists.$": 1 }
     );
 
-    if (user && user.lists.length > 0) {
+    if (list && list.length > 0) {
       const list = user.lists[0];
       res.status(200).json(list);
     } else {
@@ -194,7 +217,7 @@ router.post("/addgame/:listid", async (req, res) => {
 
 router.post("/addmanygames/:listid", async (req, res) => {
   let newGames = req.body.collection;
-  console.log(newGames);
+  console.log("197", newGames);
   let addedGamesArray = [];
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -214,18 +237,18 @@ router.post("/addmanygames/:listid", async (req, res) => {
         )
       );
     }
-    console.log(addedGamesArray);
+    console.log("217", addedGamesArray);
     // console.log(newGame[0]._id);
     // Update list's games array
     for (let addedGame of addedGamesArray) {
-      console.log(addedGame[0]._id, req.params.listid);
+      console.log("221", addedGame[0]._id, req.params.listid);
       await List.updateOne(
         { _id: req.params.listid },
         { $push: { games: addedGame[0]._id } },
         { session }
       );
     }
-
+    console.log("228");
     await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();
@@ -233,8 +256,8 @@ router.post("/addmanygames/:listid", async (req, res) => {
   } finally {
     session.endSession();
   }
-  
-  res.sendStatus(getListandGames([req.params.listid]));
+  console.log("236", req.params.listid);
+  res.send(await getListandGames([req.params.listid]));
 });
 
 router.put("/:id", async (req, res) => {
@@ -248,56 +271,53 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:userId/:listId", async (req, res) => {
   // // Delete a user by ID
-  console.log("delete req params", req.params.id);
+  console.log("delete req params", req.params.listId);
   const { userId, listId } = req.params;
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
   try {
-    const user = await User.findById("64e8f95c35b3cb20363ad4ed"); //userId hardcoded for now
-
-    if (user) {
-      // Use the $pull operator to remove the list by its listId
-      user.lists = user.lists.filter(
-        (list) => list._id !== parseInt(listId, 10)
-      );
-      await user.save();
-
-      console.log(`List with listId ${listId} deleted for user ${userId}`);
-      res
-        .status(200)
-        .json({ message: `List with listId ${listId} deleted successfully` });
-    } else {
-      res.status(404).json({ message: "User not found" });
-    }
+    await List.findOneAndDelete({ _id: listId }, { session });
+    await User.updateMany({}, { $pull: { lists: listId } }, { session });
+    await session.commitTransaction();
   } catch (error) {
-    console.error("Error deleting list:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error("Error deleting game:", error);
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
   }
 });
 
 router.delete("/deletegame/:listId/:gameId", async (req, res) => {
   const listId = req.params.listId;
   const gameId = req.params.gameId;
+  console.log("in delete route", listId, gameId);
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
   try {
-    await User.updateOne(
-      {
-        _id: "64e8f95c35b3cb20363ad4ed", // User ID hardcoded for now
-        "lists._id": listId,
-      },
-      {
-        $pull: {
-          "lists.$.games": {
-            __gameId: gameId,
-          },
-        },
+    await List.updateOne(
+      { _id: listId },
+      { $pull: { games: { $in: [gameId] } } },
+      { session },
+      (err, result) => {
+        if (err) {
+          console.error("Error:", err);
+        } else {
+          console.log("Games removed:", result);
+        }
       }
     );
-
-    res.sendStatus(200);
+    await session.commitTransaction();
   } catch (error) {
     console.error("Error deleting game:", error);
-    res.status(500).send("Error deleting game");
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
   }
+  res.sendStatus(200);
 });
 
 module.exports = router;

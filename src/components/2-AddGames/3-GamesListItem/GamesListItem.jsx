@@ -10,8 +10,8 @@ function GamesListItem({ game, i }) {
       type: "DELETE_GAME",
       payload: {
         game: game,
-        listID: currentList.__listId,
-        id: game.__gameId,
+        listID: currentList._id,
+        gameId: game._id,
         getRandom: false,
       },
     });

@@ -8,7 +8,7 @@ function* deleteGame(action) {
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
     };
-    yield axios.delete("/api/atlas/list/deletegame/" + action.payload.listID + "/" + action.payload.id, config);
+    yield axios.delete("/api/atlas/list/deletegame/" + action.payload.listID + "/" + action.payload.gameId, config);
     if (action.payload.getRandom) {
       yield put({
         type: "GET_RANDOM_GAMES",
@@ -19,10 +19,9 @@ function* deleteGame(action) {
       });
     }
     yield put({
-      type: "GET_GAMES",
+      type: "GET_CURRENT_USER_LIST",
       payload: {
         listId: action.payload.listID,
-        callbackHistory: action.payload.callbackHistory,
       },
     });
     yield put({

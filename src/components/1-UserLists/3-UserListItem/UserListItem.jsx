@@ -5,7 +5,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 function UserListItem({ list, i }) {
   let dispatch = useDispatch();
-  console.log(list);
   function setCurrentList() {
     dispatch({
       type: "SET_CURRENT_LIST",
@@ -20,7 +19,7 @@ function UserListItem({ list, i }) {
     dispatch({
       type: "DELETE_LIST",
       payload: {
-        id: list.__listId,
+        listId: list._id,
       },
     });
   }

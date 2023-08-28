@@ -3,9 +3,10 @@ import { call, put, takeLatest } from "redux-saga/effects";
 import xml2js from "xml2js";
 import React, { useState } from "react";
 import { Gamepad } from "@mui/icons-material";
+import { array } from "prop-types";
 
 function* addGameAsync(game) {
-  yield put({ type: 'ADD_GAME', payload: game });
+  yield put({ type: "ADD_GAME", payload: game });
 }
 
 // worker Saga: will be fired on "FETCH_USER" actions
@@ -20,9 +21,6 @@ function* getBGG(action) {
     // If a user is logged in, this will return their information
     // from the server session (req.user)
 
-
-
-
     let BGGresponse = yield axios.get(
       `https://boardgamegeek.com/xmlapi2/collection?username=${action.payload.bgg}&own=[0,1]&played=[0,1]`,
       {
@@ -30,11 +28,11 @@ function* getBGG(action) {
         responseType: "document",
       }
     );
-    console.log(action.payload)
+    console.log("30", action.payload);
     yield console.log(BGGresponse.status);
-    if (BGGresponse.status===200) {
+    if (BGGresponse.status === 200) {
       BGGresponse = BGGresponse.data.all;
-      let currentObject = { listId: action.payload.id };
+      let currentObject = { listId: action.payload.listId };
       let jitterator = 0;
       let collection = [];
       for (let i = 2; i < BGGresponse.length; i++) {
@@ -52,28 +50,48 @@ function* getBGG(action) {
         }
         if (jitterator === 3) {
           collection.push(currentObject);
-          currentObject = { listId: action.payload.id };
+          currentObject = { listId: action.payload.listId };
           jitterator = 0;
         }
       }
-    //   for (let game of collection) {
-    //     console.log(game);
-    //     yield call(addGameAsync, game);
-    // }
-    console.log(action.payload.id)
-    console.log(collection);
-    yield axios.post(
-      "/api/atlas/list/addmanygames/" + action.payload.id,
-      {
-        collection, 
+      console.log(action.payload.listId);
+      console.log(collection);
+      let collectionArray = [];
+      if (collection.length >= 50) {
+        for (let i = 0; i < collection.length; i += 50) {
+          if (collection.length >= 50 + i) {
+            collectionArray.push(collection.slice(i, i + 50));
+            console.log(collectionArray);
+          } else {
+            collectionArray.push(collection.slice(i));
+            console.log(collectionArray);
+          }
+        }
+      } else {
+        collectionArray.push(collection);
+      }
+      for (collection of collectionArray) {
+        console.log(collection);
+        yield axios.post(
+          "/api/atlas/list/addmanygames/" + action.payload.listId,
+          {
+            collection,
+          },
+          config
+        );
+      }
+
+      //   yield put({
+      //     type: "GET_GAMES",
+      //     payload: { listId: action.payload.listId },
+      //   });
+    }
+    yield put({
+      type: "GET_CURRENT_USER_LIST",
+      payload: {
+        listId: action.payload.listId,
       },
-      config
-    );
-  //   yield put({
-  //     type: "GET_GAMES",
-  //     payload: { listId: action.payload.id },
-  //   });
-  }
+    });
   } catch (error) {
     console.log("User get request failed", error);
   }

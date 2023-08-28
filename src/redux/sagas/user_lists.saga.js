@@ -16,21 +16,29 @@ function* fetchUserLists() {
     const atlasResponse = yield axios.get("/api/atlas/list/", config);
     console.log(atlasResponse);
     console.log(atlasResponse.data);
-    // let userListData = {
-    //   games: atlasResponse.data.games,
-    //   lastModifiedDate: atlasResponse.data.lastModifiedDate,
-    //   matchups: atlasResponse.data.matchups,
-    //   results: atlasResponse.data.results,
-    //   listId: atlasResponse.data.listId,
-    //   userId: atlasResponse.data._id,
-    // };
 
-    // const response = yield axios.get('/api/userlist/', config);
-
-    // now that the session has given us a user object
-    // with an id and username set the client-side user object to let
-    // the client-side code know the user is logged in
     yield put({ type: "SET_USER_LIST", payload: atlasResponse.data });
+  } catch (error) {
+    console.log("User get request failed", error);
+  }
+}
+
+function* fetchCurrentUserList(action) {
+  try {
+    const config = {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,
+    };
+    console.log(action);
+    // the config includes credentials which
+    // allow the server session to recognize the user
+    // If a user is logged in, this will return their information
+    // from the server session (req.user)
+    const atlasResponse = yield axios.get("/api/atlas/list/" + action.payload.listId, config);
+    console.log(atlasResponse);
+    console.log(atlasResponse.data);
+
+    yield put({ type: "SET_CURRENT_LIST", payload: atlasResponse.data });
   } catch (error) {
     console.log("User get request failed", error);
   }
@@ -55,6 +63,7 @@ function* setListIncomplete() {
 
 function* userListsSaga() {
   yield takeLatest("FETCH_USER_LISTS", fetchUserLists);
+  yield takeLatest("GET_CURRENT_USER_LIST", fetchCurrentUserList);
   yield takeLatest("SET_LIST_INCOMPLETE", setListIncomplete);
 }
 

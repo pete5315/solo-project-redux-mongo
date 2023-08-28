@@ -55,18 +55,18 @@ function* getGames(action) {
       config
     );
     console.log(games);
-    let sendGames = [];
+    let gamesToSet = [];
     for (let x of games.data.games) {
       console.log(x);
-      sendGames.push({
+      gamesToSet.push({
         name: x.name,
         id: x.id,
         url: x.url,
         thumbnail: x.thumbnail,
       });
     }
-    console.log(sendGames, 'sendgames');
-    yield put({ type: "SET_GAMES", payload: sendGames });
+    console.log(gamesToSet, 'gamesToSet');
+    yield put({ type: "SET_GAMES", payload: gamesToSet });
   } catch (error) {
     console.log("User get request failed", error);
   }

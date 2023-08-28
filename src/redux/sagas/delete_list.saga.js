@@ -9,10 +9,10 @@ function* deleteList(action) {
       withCredentials: true,
     };
     yield axios.delete("/api/atlas/list/" + "userid" + "/"+ action.payload.listId, config);
-    yield put({ type: "FETCH_USER_LISTS" });
   } catch (error) {
     console.log("User get request failed", error);
   }
+  yield put({ type: "FETCH_USER_LISTS" });
 }
 
 function* deleteListSaga() {

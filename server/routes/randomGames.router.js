@@ -5,9 +5,9 @@ const {
 const encryptLib = require("../modules/encryption");
 const pool = require("../modules/pool");
 const userStrategy = require("../strategies/user.strategy");
-const User = require("../models/user");
+const List = require("../models/list");
 const { number } = require("prop-types");
-
+const getListandGames = require("../modules/getListandGames");
 const router = express.Router();
 
 const getRandomGame = require("../modules/randomGame");
@@ -18,11 +18,12 @@ router.get(
   async (req, res) => {
     const listId = req.params.listid;
     console.log(listId);
+    let listAndGamesAggregate = await getListandGames([listId]);
+    console.log(listAndGamesAggregate);
     let fullGameArray = [];
-    await User.findOne(
+    await List.findOne(
       {
-        _id: "64e8f95c35b3cb20363ad4ed", // User ID hardcoded for now
-        "lists._id": listId,
+        _id: listId,
       },
       { "lists.$": 1 }
     )
@@ -35,7 +36,9 @@ router.get(
       });
     let randomGamesObject = { maxRandomGameCount: 4, games: [] };
     console.log(randomGamesObject);
-    while (randomGamesObject.games.length !== randomGamesObject.maxRandomGameCount) {
+    while (
+      randomGamesObject.games.length !== randomGamesObject.maxRandomGameCount
+    ) {
       randomGamesObject = getRandomGame(randomGamesObject, fullGameArray);
       console.log("40", randomGamesObject);
     }

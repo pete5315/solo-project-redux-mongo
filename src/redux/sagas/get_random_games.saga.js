@@ -16,7 +16,7 @@ function* randomGames(action) {
     // If a user is logged in, this will return their information
     // from the server session (req.user)
     const games = yield axios.get(
-      `/api/atlas/randomgames/${action.payload.currentList.__listId}`,
+      `/api/atlas/randomgames/${action.payload.listId}`,
       config
     );
     // yield put ({type:'GET_GAMES', payload:action.payload.id[0].id});

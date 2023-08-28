@@ -24,22 +24,27 @@ function RankGames() {
     console.log(currentList);
     dispatch({
       type: "GET_RANDOM_GAMES",
-      payload: { currentList, callbackHistory },
-      listID: currentList.id,
+      payload: { listId: currentList._id, currentList, callbackHistory },
     });
   }
   console.log("random games", randomGames);
   return (
     <div>
-      <Grid direction="row" container spacing={1} className="absoluteGrid" sx={{p: 0}}>
-        <Grid container item sx={{p: 0}}>
+      <Grid
+        direction="row"
+        container
+        spacing={1}
+        className="absoluteGrid"
+        sx={{ p: 0 }}
+      >
+        <Grid container item sx={{ p: 0 }}>
           {randomGames &&
             randomGames.map((game, i) =>
               i % 2 == 0 ? <FlipCard game={game} i={i} /> : <></>
             )}
         </Grid>
-        <CircularWithValueLabel progress={progress && progress.data*100} />
-        <Grid container item sx={{p: 0}}>
+        <CircularWithValueLabel progress={progress && progress.data * 100} />
+        <Grid container item sx={{ p: 0 }}>
           {randomGames &&
             randomGames.map((game, i) =>
               i % 2 == 1 ? <FlipCard game={game} i={i} column={1} /> : <></>

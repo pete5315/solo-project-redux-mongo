@@ -286,6 +286,7 @@ router.delete("/:userId/:listId", async (req, res) => {
     throw error;
   } finally {
     session.endSession();
+    res.sendStatus(200);
   }
 });
 

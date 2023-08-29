@@ -10,7 +10,7 @@ const { number } = require("prop-types");
 const getListandGames = require("../modules/getListandGames");
 const router = express.Router();
 
-const getRandomGame = require("../modules/randomGame");
+const fetchRandomGame = require("../modules/fetchRandomGames");
 
 router.get(
   "/:listid",
@@ -18,28 +18,23 @@ router.get(
   async (req, res) => {
     const listId = req.params.listid;
     console.log(listId);
-    let listAndGamesAggregate = await getListandGames([listId]);
-    console.log(listAndGamesAggregate);
-    let fullGameArray = [];
-    await List.findOne(
+    const list = await List.findOne(
       {
         _id: listId,
       },
       { "lists.$": 1 }
     )
-      .then((documents) => {
-        fullGameArray = JSON.parse(JSON.stringify(documents, null, 2)).lists[0]
-          .games; //convert the json cursor to an object
-      })
       .catch((error) => {
-        console.log("error27");
+        console.log("error28", error);
       });
+      console.log("list", list);
+    let listAndGamesAggregate = await getListandGames([list._id]);
+    let fullGameArray = listAndGamesAggregate[0].gamesInfo;
     let randomGamesObject = { maxRandomGameCount: 4, games: [] };
-    console.log(randomGamesObject);
     while (
       randomGamesObject.games.length !== randomGamesObject.maxRandomGameCount
     ) {
-      randomGamesObject = getRandomGame(randomGamesObject, fullGameArray);
+      randomGamesObject = fetchRandomGame(randomGamesObject, fullGameArray);
       console.log("40", randomGamesObject);
     }
     res.send(randomGamesObject);

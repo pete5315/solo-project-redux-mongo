@@ -21,7 +21,7 @@ console.log("in users router");
 //get all lists for a particular user
 router.get("/:userId", async (req, res) => {
   let jsonResult, objectIdArray;
-  let userId = req.params.userId
+  let userId = req.params.userId;
   // Get all lists
   await User.find({
     _id: "64e8f95c35b3cb20363ad4ed",
@@ -35,7 +35,9 @@ router.get("/:userId", async (req, res) => {
     .catch((error) => {
       console.error("Error fetching and converting documents:", error);
     });
+  console.log(objectIdArray);
   let aggregateResult = await getListandGames(objectIdArray);
+  console.log(aggregateResult);
   res.send(aggregateResult);
 });
 

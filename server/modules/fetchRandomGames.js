@@ -1,7 +1,7 @@
 const User = require("../models/user");
 
-function randomGame(randomGameObject, fullGameArray) {
-  console.log(randomGameObject);
+function fetchRandomGames(randomGameObject, fullGameArray) {
+  console.log("fullgamearray", fullGameArray);
   let filteredList = getFilteredList(randomGameObject.games, fullGameArray);
   if (filteredList.length < 1) {
     console.log("oops");
@@ -10,6 +10,7 @@ function randomGame(randomGameObject, fullGameArray) {
       games: randomGameObject.games,
     };
   }
+  console.log("lengths", filteredList.length, randomGameObject.games.length)
   randomGameObject.maxRandomGameCount =
     filteredList.length + randomGameObject.games.length > 4
       ? 4
@@ -23,14 +24,14 @@ function randomGame(randomGameObject, fullGameArray) {
   randomGameObject.games.push(
     filteredList[Math.floor(Math.random() * filteredList.length)]
   );
-  console.log(randomGameObject.games);
+  // console.log(randomGameObject.games);
   return randomGameObject;
 }
 
 function getFilteredList(randomGamesArray, fullGameArray) {
   let removeTheseGameIdsArray = [];
   for (let gameObject of randomGamesArray) {
-    console.log(gameObject);
+    // console.log(gameObject);
     removeTheseGameIdsArray.push(gameObject.__gameId);
     if (gameObject.betterThan.length > 0) {
       for (let gameId of gameObject.betterThan) {
@@ -47,8 +48,8 @@ function getFilteredList(randomGamesArray, fullGameArray) {
   let partialGameList = fullGameArray;
   let newArray = []
   for (let game of partialGameList) {
-    if (!removeTheseGameIdsArray.includes(game.__gameId)) {
-      console.log("it's FINE", game.__gameId)
+    if (!removeTheseGameIdsArray.includes(game._id)) {
+      console.log("it's FINE", game._id)
       newArray.push(game);
     }
   }
@@ -56,4 +57,4 @@ function getFilteredList(randomGamesArray, fullGameArray) {
   return newArray;
 }
 
-module.exports = randomGame;
+module.exports = fetchRandomGames;

@@ -23,18 +23,18 @@ function* randomGames(action) {
     // now that the session has given us a user object
     // with an id and username set the client-side user object to let
     // the client-side code know the user is logged in
-    console.log("games data", games.data);
+    console.log("games data", games.data.games);
     console.log(action.payload);
 
     if (games.data[0] === "complete") {
       console.log("COMPLETE COMPLETE");
-      yield put({ type: "SET_RANDOM_GAMES", payload: games.data });
+      yield put({ type: "SET_RANDOM_GAMES", payload: games.data.games });
       action.payload.callbackHistory.push("/list");
     } else {
       yield put({ type: "UNSET_LIST_COMPLETE", payload: games.data });
       yield put({ type: "SET_LIST_INCOMPLETE", payload: action.payload.currentList.id });
     }
-    yield put({ type: "SET_RANDOM_GAMES", payload: games.data });
+    yield put({ type: "SET_RANDOM_GAMES", payload: games.data.games });
     console.log(action.payload);
     yield put({
       type: "GET_PROGRESS",

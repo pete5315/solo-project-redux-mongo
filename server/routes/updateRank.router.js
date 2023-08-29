@@ -10,7 +10,7 @@ const { number } = require("prop-types");
 
 const router = express.Router();
 
-const getRandomGame = require("../modules/randomGame");
+const fetchRandomGame = require("../modules/fetchRandomGames");
 
 router.post("/:listid", rejectUnauthenticated, async (req, res) => {
   const listId = req.params.listid;

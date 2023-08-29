@@ -63,7 +63,7 @@ function* setListIncomplete() {
 
 function* userListsSaga() {
   yield takeLatest("FETCH_USER_LISTS", fetchUserLists);
-  yield takeLatest("GET_CURRENT_USER_LIST", fetchCurrentUserList);
+  yield takeLatest("FETCH_CURRENT_USER_LIST", fetchCurrentUserList);
   yield takeLatest("SET_LIST_INCOMPLETE", setListIncomplete);
 }
 

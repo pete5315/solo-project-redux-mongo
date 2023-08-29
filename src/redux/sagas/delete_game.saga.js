@@ -19,7 +19,7 @@ function* deleteGame(action) {
       });
     }
     yield put({
-      type: "GET_CURRENT_USER_LIST",
+      type: "FETCH_CURRENT_USER_LIST",
       payload: {
         listId: action.payload.listID,
       },

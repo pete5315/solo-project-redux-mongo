@@ -23,10 +23,9 @@ function GameCard(props) {
   const currentBest = currentRank.best;
   const currentWorst = currentRank.worst;
 
-  console.log(props.game);
   function setBest() {
-    console.log(props.game.__gameId);
-    if (currentBest === props.game.__gameId) {
+    console.log(props.game._id);
+    if (currentBest === props.game._id) {
       dispatch({ type: "UNSET_BEST" });
     } else {
       setDOMBest(true);
@@ -36,7 +35,7 @@ function GameCard(props) {
           type: "SET_CURRENT_RANK",
           payload: {
             ...currentRank,
-            best: props.game.__gameId,
+            best: props.game._id,
             randomGames,
             listID: currentList._id,
           },
@@ -47,7 +46,7 @@ function GameCard(props) {
           type: "SEND_CURRENT_RANK",
           payload: {
             ...currentRank,
-            best: props.game.__gameId,
+            best: props.game._id,
             randomGames,
             listID: currentList._id,
             callbackHistory,
@@ -57,8 +56,8 @@ function GameCard(props) {
     }
   }
   function setWorst() {
-    console.log(props.game.__gameId);
-    if (currentWorst === props.game.__gameId) {
+    console.log(props.game._id);
+    if (currentWorst === props.game._id) {
       dispatch({ type: "UNSET_WORST" });
     } else {
       setDOMWorst(true);
@@ -69,7 +68,7 @@ function GameCard(props) {
           type: "SEND_CURRENT_RANK",
           payload: {
             ...currentRank,
-            worst: props.game.__gameId,
+            worst: props.game._id,
             listID: currentList._id,
             callbackHistory,
           },
@@ -79,7 +78,7 @@ function GameCard(props) {
           type: "SET_CURRENT_RANK",
           payload: {
             ...currentRank,
-            worst: props.game.__gameId,
+            worst: props.game._id,
             randomGames,
             callbackHistory,
             listID: currentList._id,
@@ -94,7 +93,7 @@ function GameCard(props) {
       payload: {
         game: props.game,
         listID: currentList._id,
-        id: props.game.__gameId,
+        id: props.game._id,
         getRandom: true,
       },
     });
@@ -113,9 +112,9 @@ function GameCard(props) {
           p: 2,
           my: 0.5,
           backgroundColor:
-            currentBest === props.game.__gameId
+            currentBest === props.game._id
               ? "rgb(153, 255, 153)"
-              : currentWorst === props.game.__gameId
+              : currentWorst === props.game._id
               ? "rgb(255, 141, 141)"
               : "white",
         }}
@@ -135,7 +134,7 @@ function GameCard(props) {
             }}
             onClick={setBest}
           >
-            {currentBest===props.game.__gameId ? 'undo' : 'best'}
+            {currentBest===props.game._id ? 'undo' : 'best'}
           </Button>
         </CardActions>
         <CardMedia
@@ -164,7 +163,7 @@ function GameCard(props) {
             }}
             onClick={setWorst}
           >
-            {currentWorst===props.game.__gameId ? 'undo' : 'worst'}
+            {currentWorst===props.game._id ? 'undo' : 'worst'}
           </Button>
           <Button
             variant="contained"

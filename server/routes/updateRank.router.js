@@ -24,15 +24,15 @@ router.post("/:listid", rejectUnauthenticated, async (req, res) => {
     console.log(randomGameInstance);
 
     if (
-      randomGameInstance.__gameId !== currentBest &&
-      randomGameInstance.__gameId !== currentWorst
+      randomGameInstance._id !== currentBest &&
+      randomGameInstance._id !== currentWorst
     ) {
       if (currentMiddle1 === null) {
-        console.log("middle 1", randomGameInstance.__gameId);
-        currentMiddle1 = randomGameInstance.__gameId;
+        console.log("middle 1", randomGameInstance._id);
+        currentMiddle1 = randomGameInstance._id;
       } else {
-        console.log("middle 2", randomGameInstance.__gameId);
-        currentMiddle2 = randomGameInstance.__gameId;
+        console.log("middle 2", randomGameInstance._id);
+        currentMiddle2 = randomGameInstance._id;
       }
     }
   }
@@ -84,14 +84,14 @@ router.post("/:listid", rejectUnauthenticated, async (req, res) => {
     currentMiddle2,
   ];
   let updateBettersArray = [
-    { __gameId: currentBest, updateArray: bestUpdatesBetters },
-    { __gameId: currentMiddle1, updateArray: middle1UpdateBetters },
-    { __gameId: currentMiddle2, updateArray: middle2UpdateBetters },
+    { _id: currentBest, updateArray: bestUpdatesBetters },
+    { _id: currentMiddle1, updateArray: middle1UpdateBetters },
+    { _id: currentMiddle2, updateArray: middle2UpdateBetters },
   ];
   let updateWorsesArray = [
-    { __gameId: currentMiddle1, updateArray: middle1UpdateWorses },
-    { __gameId: currentMiddle2, updateArray: middle2UpdateWorses },
-    { __gameId: currentWorst, updateArray: worseUpdateWorses },
+    { _id: currentMiddle1, updateArray: middle1UpdateWorses },
+    { _id: currentMiddle2, updateArray: middle2UpdateWorses },
+    { _id: currentWorst, updateArray: worseUpdateWorses },
   ];
   console.log(updateBettersArray);
   const updatePromises = [];
@@ -99,7 +99,7 @@ router.post("/:listid", rejectUnauthenticated, async (req, res) => {
     console.log('updateobject', updateObject.updateArray, listId);
     const updatePromise = User.updateOne(
       //this adds a new list
-      { _id: "64e8f95c35b3cb20363ad4ed", "lists._id": listId, "lists.games.__gameId": updateObject.__gameId }, //user id hardcoded currently
+      { _id: "64e8f95c35b3cb20363ad4ed", "lists._id": listId, "lists.games._id": updateObject._id }, //user id hardcoded currently
       {
         $addToSet: {
           "lists.$.games.$.betterThan": updateObject.updateArray,
@@ -111,7 +111,7 @@ router.post("/:listid", rejectUnauthenticated, async (req, res) => {
   for (let updateObject of updateWorsesArray) {
     const updatePromise = User.updateOne(
       //this adds a new list
-      { _id: "64e8f95c35b3cb20363ad4ed", "lists._id": listId, "lists.games.__gameId": updateObject.__gameId }, //user id hardcoded currently
+      { _id: "64e8f95c35b3cb20363ad4ed", "lists._id": listId, "lists.games._id": updateObject._id }, //user id hardcoded currently
       {
         $push: {
           "lists.$.games.$.worseThan": {$each: updateObject.updateArray},

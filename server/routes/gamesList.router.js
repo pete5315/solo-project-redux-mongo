@@ -199,7 +199,7 @@ router.post("/addgame/:listId", async (req, res) => {
   //     $addToSet: {
   //       "lists.$.games": [
   //         {
-  //           __gameId: newId + 1,
+  //           _id: newId + 1,
   //           name: req.body.newGame,
   //           url: req.body.url,
   //           betterThan: [],

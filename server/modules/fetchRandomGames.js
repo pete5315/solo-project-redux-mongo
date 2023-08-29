@@ -32,7 +32,7 @@ function getFilteredList(randomGamesArray, fullGameArray) {
   let removeTheseGameIdsArray = [];
   for (let gameObject of randomGamesArray) {
     // console.log(gameObject);
-    removeTheseGameIdsArray.push(gameObject.__gameId);
+    removeTheseGameIdsArray.push(gameObject._id);
     if (gameObject.betterThan.length > 0) {
       for (let gameId of gameObject.betterThan) {
         removeTheseGameIdsArray.push(gameId);

@@ -12,7 +12,7 @@ async function lastGameId(listId) {
     
     if (user && user.lists.length > 0) {
       const games = user.lists[0].games;
-      const maxGameId = Math.max(...games.map(game => game.__gameId), 0);
+      const maxGameId = Math.max(...games.map(game => game._id), 0);
       console.log(maxGameId)
       return maxGameId;
     }

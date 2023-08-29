@@ -10,9 +10,11 @@ function UserLists() {
   let dispatch = useDispatch();
 
   const lists = useSelector((store) => store.userLists);
+  const user = useSelector((store) => store.user);
   function getUserLists() {
     dispatch({
       type: "FETCH_USER_LISTS",
+      payload: user,
     });
   }
 

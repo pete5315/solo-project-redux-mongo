@@ -8,11 +8,14 @@ function* deleteList(action) {
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
     };
-    yield axios.delete("/api/atlas/list/" + "userid" + "/"+ action.payload.listId, config);
+    yield axios.delete(
+      "/api/atlas/list/" + "userid" + "/" + action.payload.listId,
+      config
+    );
   } catch (error) {
     console.log("User get request failed", error);
   }
-  yield put({ type: "FETCH_USER_LISTS" });
+  yield put({ type: "FETCH_USER_LISTS", payload: {user: {id: action.payload.user.id }}});
 }
 
 function* deleteListSaga() {

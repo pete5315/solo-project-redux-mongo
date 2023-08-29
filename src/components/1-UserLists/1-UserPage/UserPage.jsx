@@ -24,6 +24,7 @@ function UserPage() {
   function newList2() {
     dispatch({
       type: "FETCH_USER_LISTS",
+      payload: user,
     });
   }
 

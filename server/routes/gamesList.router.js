@@ -19,8 +19,9 @@ console.log("in users router");
 // Define your routes and endpoints
 
 //get all lists for a particular user
-router.get("/", async (req, res) => {
+router.get("/:userId", async (req, res) => {
   let jsonResult, objectIdArray;
+  let userId = req.params.userId
   // Get all lists
   await User.find({
     _id: "64e8f95c35b3cb20363ad4ed",
@@ -38,9 +39,9 @@ router.get("/", async (req, res) => {
   res.send(aggregateResult);
 });
 
-router.get("/:listid", async (req, res) => {
+router.get("/:listId", async (req, res) => {
   let jsonResult, objectIdArray;
-  let listId = req.params.listid;
+  let listId = req.params.listId;
   // Get all lists
   await List.find({
     _id: listId,
@@ -61,9 +62,9 @@ router.get("/:listid", async (req, res) => {
   res.send(aggregateResult);
 });
 
-router.get("/games/:listid", async (req, res) => {
+router.get("/games/:listId", async (req, res) => {
   //get the games from a particular list
-  const listId = req.params.listid;
+  const listId = req.params.listId;
   console.log("reqbody", req.body);
   try {
     const list = await List.findOne(
@@ -151,12 +152,12 @@ router.post("/", async (req, res) => {
   res.sendStatus(200);
 });
 
-router.post("/addgame/:listid", async (req, res) => {
+router.post("/addgame/:listId", async (req, res) => {
   //add a new game to a particular list
   console.log("reqbody72", req.body);
   // Add a new list
   // console.log('newid', newId);
-  console.log(req.params.listid);
+  console.log(req.params.listId);
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -175,7 +176,7 @@ router.post("/addgame/:listid", async (req, res) => {
     console.log(newGame[0]._id);
     // Update list's games array
     await List.updateOne(
-      { _id: req.params.listid },
+      { _id: req.params.listId },
       { $push: { games: newGame[0]._id } },
       { session }
     );
@@ -188,10 +189,10 @@ router.post("/addgame/:listid", async (req, res) => {
     session.endSession();
   }
 
-  // let newId = await lastGameId(req.params.listid);
+  // let newId = await lastGameId(req.params.listId);
   // console.log("newid", newId);
   // User.updateOne(
-  //   { _id: "64e8f95c35b3cb20363ad4ed", "lists._id": req.params.listid }, //user id hardcoded currently
+  //   { _id: "64e8f95c35b3cb20363ad4ed", "lists._id": req.params.listId }, //user id hardcoded currently
   //   {
   //     $addToSet: {
   //       "lists.$.games": [
@@ -215,7 +216,7 @@ router.post("/addgame/:listid", async (req, res) => {
   // res.sendStatus(200);
 });
 
-router.post("/addmanygames/:listid", async (req, res) => {
+router.post("/addmanygames/:listId", async (req, res) => {
   let newGames = req.body.collection;
   console.log("197", newGames);
   let addedGamesArray = [];
@@ -241,9 +242,9 @@ router.post("/addmanygames/:listid", async (req, res) => {
     // console.log(newGame[0]._id);
     // Update list's games array
     for (let addedGame of addedGamesArray) {
-      console.log("221", addedGame[0]._id, req.params.listid);
+      console.log("221", addedGame[0]._id, req.params.listId);
       await List.updateOne(
-        { _id: req.params.listid },
+        { _id: req.params.listId },
         { $push: { games: addedGame[0]._id } },
         { session }
       );
@@ -256,8 +257,8 @@ router.post("/addmanygames/:listid", async (req, res) => {
   } finally {
     session.endSession();
   }
-  console.log("236", req.params.listid);
-  res.send(await getListandGames([req.params.listid]));
+  console.log("236", req.params.listId);
+  res.send(await getListandGames([req.params.listId]));
 });
 
 router.put("/:id", async (req, res) => {

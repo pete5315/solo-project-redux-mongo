@@ -7,7 +7,6 @@ function* newGame(action) {
   if (action.payload === null) {
     action.payload = 1;
   }
-  console.log(action.payload);
   try {
     const config = {
       headers: { "Content-Type": "application/json" },
@@ -17,10 +16,10 @@ function* newGame(action) {
     // the config includes credentials which
     // allow the server session to recognize the user
     // If a user is logged in, this will return their information
-    // from the server session (req.user)  
+    // from the server session (req.user)
     console.log(action.payload);
 
-    yield axios.post(
+    const newList = yield axios.post(
       "/api/atlas/list/addgame/" + action.payload.listId,
       {
         newGame: action.payload.newGame,
@@ -30,10 +29,9 @@ function* newGame(action) {
       },
       config
     );
-    yield put({
-      type: "GET_GAMES",
-      payload: { listId: action.payload.listId },
-    });
+    console.log(newList);
+    yield put({ type: "SET_CURRENT_LIST", payload: newList.data });
+
     // now that the session has given us a user object
     // with an id and username set the client-side user object to let
     // the client-side code know the user is logged in
@@ -49,7 +47,7 @@ function* getGames(action) {
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
     };
-    console.log(50, action.payload)
+    console.log(50, action.payload);
     let games = yield axios.get(
       "/api/atlas/list/games/" + action.payload.listId,
       config
@@ -65,7 +63,7 @@ function* getGames(action) {
         thumbnail: x.thumbnail,
       });
     }
-    console.log(gamesToSet, 'gamesToSet');
+    console.log(gamesToSet, "gamesToSet");
     yield put({ type: "SET_GAMES", payload: gamesToSet });
   } catch (error) {
     console.log("User get request failed", error);
@@ -73,8 +71,7 @@ function* getGames(action) {
 }
 
 function* newGameSaga() {
-  console.log("hello from add_game saga"),
-    yield takeLatest("ADD_GAME", newGame);
+  yield takeLatest("ADD_GAME", newGame);
   yield takeLatest("GET_GAMES", getGames);
 }
 

@@ -17,7 +17,7 @@ router.get(
   rejectUnauthenticated,
   async (req, res) => {
     const listId = req.params.listid;
-    console.log(listId);
+    console.log("listid 20", listId);
     const list = await List.findOne(
       {
         _id: listId,

@@ -11,7 +11,7 @@ function* addGameAsync(game) {
 
 // worker Saga: will be fired on "FETCH_USER" actions
 function* getBGG(action) {
-  try {
+  
     const config = {
       headers: { "Content-Type": "application/json" },
       withCredentials: true,
@@ -72,33 +72,35 @@ function* getBGG(action) {
       }
       for (collection of collectionArray) {
         console.log(collection);
-        yield axios.post(
+        yield call(axios.post,
           "/api/atlas/list/addmanygames/" + action.payload.listId,
           {
             collection,
           },
           config
         );
+        return
       }
 
-      //   yield put({
-      //     type: "GET_GAMES",
-      //     payload: { listId: action.payload.listId },
-      //   });
+    //     yield put({
+    //       type: "GET_GAMES",
+    //       payload: { listId: action.payload.listId },
+    //     });
     }
-    yield put({
-      type: "FETCH_CURRENT_USER_LIST",
-      payload: {
-        listId: action.payload.listId,
-      },
-    });
-  } catch (error) {
-    console.log("User get request failed", error);
-  }
+    // yield put({
+    //   type: "FETCH_CURRENT_USER_LIST",
+    //   payload: {
+    //     listId: action.payload.listId,
+    //   },
+    // });
+  
 }
+
+
 
 function* getBGGSaga() {
   yield takeLatest("GET_BGG", getBGG);
+  
 }
 
 export default getBGGSaga;

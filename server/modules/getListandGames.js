@@ -3,7 +3,7 @@ const Game = require("../models/game");
 
 async function getListandGames(objectIdArray) {
   let aggregateResult;
-  console.log(objectIdArray);
+  console.log("object id array", objectIdArray);
   try {
     aggregateResult = await List.aggregate([
       {
@@ -11,11 +11,14 @@ async function getListandGames(objectIdArray) {
       },
       {
         $lookup: {
-          from: "games", // Collection name for games
-          localField: "games", // Array field in List collection
-          foreignField: "_id", // Reference field in Game collection
-          as: "gamesInfo", // Alias for the joined games
+          from: "games",
+          localField: "games",
+          foreignField: "_id",
+          as: "gamesInfo",
         },
+      },
+      {
+        $sort: { _id: 1 } // Sort the documents within the pipeline
       },
       {
         $project: {

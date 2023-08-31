@@ -8,7 +8,7 @@ async function lastListId(id) {
   )
     .then((documents) => {
       const jsonResult = JSON.parse(JSON.stringify(documents, null, 2)); //this converts the cursor to object format
-      console.log(jsonResult.pop());
+      console.log("json result pop", jsonResult.pop());
       result = jsonResult.pop()._id;
       console.log("result", result);
     })

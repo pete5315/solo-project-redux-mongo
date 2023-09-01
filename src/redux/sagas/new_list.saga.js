@@ -14,7 +14,7 @@ function* newList(action) {
     // from the server session (req.user)
     let atlasResponse = yield axios.post('/api/atlas/list/', config);
     console.log(atlasResponse)
-    yield put({type: "FETCH_USER_LISTS", payload: {user: {id: action.payload.user}}});
+    yield put({type: "FETCH_USER_LISTS", payload: {user: {id: "userid"}}});
     // let response = yield axios.get('/api/newlist/', config);
     // response=response.data[0]
     // yield put({ type: 'SET_CURRENT_LIST', payload: {id: response, completed: false }});
@@ -22,7 +22,7 @@ function* newList(action) {
     // yield put({ type: 'UNSET_GAMES', payload: response });
     // yield action.payload.callbackHistory.push('/inputs')
   } catch (error) {
-    console.log('User get request failed', error);
+    console.log('fetch list request failed', error);
   }
 }
 

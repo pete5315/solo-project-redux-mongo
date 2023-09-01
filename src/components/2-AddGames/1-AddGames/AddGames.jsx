@@ -35,7 +35,7 @@ function AddGames() {
     });
   }
 
-  function submitTheData(event) {
+  function addGameManually(event) {
     event.preventDefault();
     console.log(list._id);
     if (list._id === null) {
@@ -64,7 +64,7 @@ function AddGames() {
             />
             <input type="submit" value="Submit"></input>
           </form>
-          <form onSubmit={(e) => submitTheData(e)}>
+          <form onSubmit={(e) => addGameManually(e)}>
             <label>Game name</label>
             <input
               value={newGameName}

@@ -17,7 +17,7 @@ function* fetchUserLists(action) {
     // if (action.payload.user==="") {
       action.payload.user = "64e8f95c35b3cb20363ad4ed";
     // } 
-    const atlasResponse = yield axios.get("/api/atlas/list/" + action.payload.user, config);
+    const atlasResponse = yield axios.get("/api/atlas/list/" + "userid", config);
     console.log(atlasResponse);
     console.log(atlasResponse.data);
 
@@ -38,7 +38,7 @@ function* fetchCurrentUserList(action) {
     // allow the server session to recognize the user
     // If a user is logged in, this will return their information
     // from the server session (req.user)
-    const atlasResponse = yield axios.get("/api/atlas/list/list/" + action.payload.listId, config);
+    const atlasResponse = yield axios.get("/api/atlas/list/userId/" + action.payload.listId, config);
     console.log(atlasResponse);
     console.log(atlasResponse.data);
 

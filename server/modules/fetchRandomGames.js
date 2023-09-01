@@ -24,14 +24,12 @@ function fetchRandomGames(randomGameObject, fullGameArray) {
   randomGameObject.games.push(
     filteredList[Math.floor(Math.random() * filteredList.length)]
   );
-  // console.log(randomGameObject.games);
   return randomGameObject;
 }
 
 function getFilteredList(randomGamesArray, fullGameArray) {
   let removeTheseGameIdsArray = [];
   for (let gameObject of randomGamesArray) {
-    // console.log(gameObject);
     removeTheseGameIdsArray.push(gameObject._id);
     if (gameObject.betterThan.length > 0) {
       for (let gameId of gameObject.betterThan) {

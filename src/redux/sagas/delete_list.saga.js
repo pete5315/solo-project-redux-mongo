@@ -15,7 +15,7 @@ function* deleteList(action) {
   } catch (error) {
     console.log("User get request failed", error);
   }
-  yield put({ type: "FETCH_USER_LISTS", payload: {user: {id: action.payload.user.id }}});
+  yield put({ type: "FETCH_USER_LISTS", payload: {user: {id: action.payload.user }}});
 }
 
 function* deleteListSaga() {

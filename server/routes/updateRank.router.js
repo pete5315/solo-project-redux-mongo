@@ -5,7 +5,7 @@ const {
 const encryptLib = require("../modules/encryption");
 const pool = require("../modules/pool");
 const userStrategy = require("../strategies/user.strategy");
-const User = require("../models/user");
+const Game = require("../models/game");
 const { number } = require("prop-types");
 
 const router = express.Router();
@@ -56,12 +56,12 @@ router.post("/:listid", rejectUnauthenticated, async (req, res) => {
   //function to get games that the current middle2 is better than
   //function to get games that the current middle1 is worse than
   //function to get games that the current middle2 is worse than
-  let bestIsWorseThan = [1,2];
-  let middle1IsBetterThan = [1,2];
-  let middle1IsWorseThan = [1,2];
-  let middle2IsBetterThan = [1,2];
-  let middle2IsWorseThan = [1,2];
-  let worstIsBetterThan = [1,2];
+  let bestIsWorseThan = [];
+  let middle1IsBetterThan = [];
+  let middle1IsWorseThan = [];
+  let middle2IsBetterThan = [];
+  let middle2IsWorseThan = [];
+  let worstIsBetterThan = [];
 
   let bestUpdatesBetters = [
     ...middle1IsBetterThan,
@@ -96,25 +96,22 @@ router.post("/:listid", rejectUnauthenticated, async (req, res) => {
   console.log(updateBettersArray);
   const updatePromises = [];
   for (let updateObject of updateBettersArray) {
-    console.log('updateobject', updateObject.updateArray, listId);
-    const updatePromise = User.updateOne(
-      //this adds a new list
-      { _id: "64e8f95c35b3cb20363ad4ed", "lists._id": listId, "lists.games._id": updateObject._id }, //user id hardcoded currently
+    const updatePromise = Game.updateOne(
+      { _id: updateObject._id },
       {
         $addToSet: {
-          "lists.$.games.$.betterThan": updateObject.updateArray,
+          betterThan: updateObject.updateArray,
         },
       }
     );
     updatePromises.push(updatePromise);
   }
   for (let updateObject of updateWorsesArray) {
-    const updatePromise = User.updateOne(
-      //this adds a new list
-      { _id: "64e8f95c35b3cb20363ad4ed", "lists._id": listId, "lists.games._id": updateObject._id }, //user id hardcoded currently
+    const updatePromise = Game.updateOne(
+      { _id: updateObject._id },
       {
-        $push: {
-          "lists.$.games.$.worseThan": {$each: updateObject.updateArray},
+        $addToSet: {
+          worseThan: updateObject.updateArray,
         },
       }
     );
@@ -127,11 +124,7 @@ router.post("/:listid", rejectUnauthenticated, async (req, res) => {
   } catch (error) {
     console.error("Error updating betterThan arrays:", error);
   }
-
 });
-
-
-
 
 // currentBest: action.payload.best,
 //         currentWorst: action.payload.worst,

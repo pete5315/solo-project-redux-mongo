@@ -30,18 +30,17 @@ router.get("/:userId", async (req, res) => {
       jsonResult = JSON.parse(JSON.stringify(documents, null, 2)); //this converts the cursor to object format
       userLists = jsonResult[0].lists;
       objectIdArray = documents[0].lists;
-      // res.send(jsonResult[0].lists); //this should return the id of the newest list just added
     })
     .catch((error) => {
       console.error("Error fetching and converting documents:", error);
     });
-  console.log(objectIdArray);
+  console.log("object id array", objectIdArray);
   let aggregateResult = await getListandGames(objectIdArray);
-  console.log(aggregateResult);
+  console.log("aggregate result", aggregateResult);
   res.send(aggregateResult);
 });
 
-router.get("/:listId", async (req, res) => {
+router.get("/list/:listId", async (req, res) => {
   let jsonResult, objectIdArray;
   let listId = req.params.listId;
   // Get all lists
@@ -58,9 +57,9 @@ router.get("/:listId", async (req, res) => {
     .catch((error) => {
       console.error("Error fetching and converting documents:", error);
     });
-  console.log(objectIdArray);
+  console.log("60", objectIdArray);
   let aggregateResult = await getListandGames([objectIdArray]);
-  console.log(aggregateResult);
+  console.log("62", aggregateResult);
   res.send(aggregateResult);
 });
 

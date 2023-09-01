@@ -19,7 +19,7 @@ function AddGames() {
 
   function checkIfInList() {
     if (list._id) {
-      console.log(list.id);
+      console.log(list._id);
       dispatch({ type: "SET_GAMES", payload: list.games });
       return;
     } else {
